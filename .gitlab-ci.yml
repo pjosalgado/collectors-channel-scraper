@@ -1,0 +1,24 @@
+image: python:3.8
+
+stages:
+  - test
+  - deploy
+
+before_script:
+  - pip install -r requirements.txt
+
+autounit:
+  stage: test
+  script:
+    - python3 -m unittest
+
+scrapinghub:
+  stage: deploy
+  script:
+    - scripts/shub-dependencies.sh
+    - scripts/deploy-to-shub.sh
+  only:
+    - master
+  environment:
+    name: scrapinghub
+    url: $ENV_URL
