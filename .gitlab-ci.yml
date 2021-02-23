@@ -2,27 +2,34 @@
 # See https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#priority-of-environment-variables
+
 image: python:3.8
+
 stages:
-- test
-- deploy
+    - test
+    - deploy
+
 before_script:
-- pip install -r requirements.txt
+    - pip install -r requirements.txt
+
 autounit:
-  stage: test
-  script:
-  - python3 -m unittest
+    stage: test
+    script:
+        - python3 -m unittest
+
 scrapinghub:
-  stage: deploy
-  script:
-  - scripts/shub-dependencies.sh
-  - scripts/deploy-to-shub.sh
-  only:
-  - master
-  environment:
-    name: scrapinghub
-    url: "$ENV_URL"
+    stage: deploy
+    script:
+        - scripts/shub-dependencies.sh
+        - scripts/deploy-to-shub.sh
+    only:
+        - master
+    environment:
+        name: scrapinghub
+        url: "$ENV_URL"
+
 sast:
-  stage: test
+    stage: test
+
 include:
-- template: Security/SAST.gitlab-ci.yml
+    - template: Security/SAST.gitlab-ci.yml
