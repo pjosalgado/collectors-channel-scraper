@@ -1,35 +1,27 @@
-# You can override the included template(s) by including variable overrides
-# See https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#priority-of-environment-variables
-
-image: python:3.8
+image: python:3.9-slim
 
 stages:
     - test
     - deploy
 
-before_script:
-    - pip install -r requirements.txt
+include:
+    - template: Security/SAST.gitlab-ci.yml
 
 autounit:
     stage: test
     script:
-        - python3 -m unittest
+        - python -m unittest
 
 scrapinghub:
     stage: deploy
     script:
-        - scripts/shub-dependencies.sh
-        - scripts/deploy-to-shub.sh
+        - apt-get update
+        - apt-get install gcc rpl -y
+        - pip install -r requirements.txt
+        - rpl '$SHUB_API_KEY' $SHUB_API_KEY scrapinghub.yml
+        - shub deploy
     only:
         - master
     environment:
         name: scrapinghub
-        url: "$ENV_URL"
-
-sast:
-    stage: test
-
-include:
-    - template: Security/SAST.gitlab-ci.yml
+        url: $ENV_URL
