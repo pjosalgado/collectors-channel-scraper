@@ -12,6 +12,9 @@ autounit:
     script:
         - python -m unittest
 
+sast:
+  stage: test
+
 scrapinghub:
     stage: deploy
     script:
