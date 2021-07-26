@@ -15,7 +15,7 @@ SPIDER_MODULES = ['movies_shopping_crawler.spiders']
 NEWSPIDER_MODULE = 'movies_shopping_crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = ''
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:90.0) Gecko/20100101 Firefox/90.0'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
