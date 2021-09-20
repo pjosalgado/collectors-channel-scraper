@@ -26,7 +26,34 @@ class AmazonSpider(scrapy.Spider):
         'https://www.amazon.com.br/s?k=uhd&i=dvd&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=price-asc-rank&dc&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&qid=1608960743&rnid=19392499011&ref=sr_st_price-asc-rank'
     ]
 
-    ignored_categories = ['Acessório de telefone sem fio', 'CD de áudio', 'Eletrônicos']
+    ignored_categories = [
+        'Acessório de telefone sem fio', 
+        'CD de áudio', 
+        'Eletrônicos',
+        'CD de MP3',
+        'CD multimídia',
+        'CD-ROM',
+        'Cartas',
+        'Computadores pessoais',
+        'Cozinha',
+        'Disco de Vinil',
+        'Diversos',
+        'Errata ou Retratação de livro',
+        'Espiral',
+        'Fita cassete',
+        'Kindle',
+        'Livro cartonado',
+        'Luggage',
+        'Nintendo Switch',
+        'PC',
+        'PlayStation 3',
+        'PlayStation 4',
+        'Produtos de escritório',
+        'Vestuário',
+        'Videogame',
+        'Xbox One',
+        'Áudio, Cassete'
+    ]
 
 
     @classmethod
@@ -66,53 +93,62 @@ class AmazonSpider(scrapy.Spider):
             full_title_small_edition, title_type_small_edition, url_small_edition, price_small_edition = \
                 get_edition_details('.a-section.a-spacing-none.a-spacing-top-small', movie_selector, response, title)
 
-            if full_title_small_edition is not None and title_type_small_edition not in self.ignored_categories: 
-                yield {
-                    'spider': self.name, 
-                    'spider_pretty_name': 'Amazon', 
-                    'spider_url': response.url, 
-                    'timestamp': timestamp, 
-                    'full_title': full_title_small_edition, 
-                    'title': title, 
-                    'title_type': title_type_small_edition, 
-                    'url': url_small_edition, 
-                    'price': price_small_edition, 
-                    'cover_url': cover_url
-                }
+            if full_title_small_edition is not None: 
+                if title_type_small_edition not in self.ignored_categories: 
+                    yield {
+                        'spider': self.name, 
+                        'spider_pretty_name': 'Amazon', 
+                        'spider_url': response.url, 
+                        'timestamp': timestamp, 
+                        'full_title': full_title_small_edition, 
+                        'title': title, 
+                        'title_type': title_type_small_edition, 
+                        'url': url_small_edition, 
+                        'price': price_small_edition, 
+                        'cover_url': cover_url
+                    }
+                else: 
+                    self.log('ignoring title due to filter {} - {}'.format(title_type_small_edition, full_title_small_edition))
 
             full_title_micro_edition, title_type_micro_edition, url_micro_edition, price_micro_edition = \
                 get_edition_details('.a-section.a-spacing-none.a-spacing-top-micro', movie_selector, response, title)
 
-            if full_title_micro_edition is not None and title_type_micro_edition not in self.ignored_categories: 
-                yield {
-                    'spider': self.name, 
-                    'spider_pretty_name': 'Amazon', 
-                    'spider_url': response.url, 
-                    'timestamp': timestamp, 
-                    'full_title': full_title_micro_edition, 
-                    'title': title, 
-                    'title_type': title_type_micro_edition, 
-                    'url': url_micro_edition, 
-                    'price': price_micro_edition, 
-                    'cover_url': cover_url
-                }
+            if full_title_micro_edition is not None: 
+                if title_type_micro_edition not in self.ignored_categories: 
+                    yield {
+                        'spider': self.name, 
+                        'spider_pretty_name': 'Amazon', 
+                        'spider_url': response.url, 
+                        'timestamp': timestamp, 
+                        'full_title': full_title_micro_edition, 
+                        'title': title, 
+                        'title_type': title_type_micro_edition, 
+                        'url': url_micro_edition, 
+                        'price': price_micro_edition, 
+                        'cover_url': cover_url
+                    }
+                else: 
+                    self.log('ignoring title due to filter {} - {}'.format(title_type_micro_edition, full_title_micro_edition))
 
             full_title_mini_edition, title_type_mini_edition, url_mini_edition, price_mini_edition = \
                 get_edition_details('.a-section.a-spacing-none.a-spacing-top-mini', movie_selector, response, title)
 
-            if full_title_mini_edition is not None and title_type_mini_edition not in self.ignored_categories: 
-                yield {
-                    'spider': self.name, 
-                    'spider_pretty_name': 'Amazon', 
-                    'spider_url': response.url, 
-                    'timestamp': timestamp, 
-                    'full_title': full_title_mini_edition, 
-                    'title': title, 
-                    'title_type': title_type_mini_edition, 
-                    'url': url_mini_edition, 
-                    'price': price_mini_edition, 
-                    'cover_url': cover_url
-                }
+            if full_title_mini_edition is not None: 
+                if title_type_mini_edition not in self.ignored_categories: 
+                    yield {
+                        'spider': self.name, 
+                        'spider_pretty_name': 'Amazon', 
+                        'spider_url': response.url, 
+                        'timestamp': timestamp, 
+                        'full_title': full_title_mini_edition, 
+                        'title': title, 
+                        'title_type': title_type_mini_edition, 
+                        'url': url_mini_edition, 
+                        'price': price_mini_edition, 
+                        'cover_url': cover_url
+                    }
+                else: 
+                    self.log('ignoring title due to filter {} - {}'.format(title_type_mini_edition, full_title_mini_edition))
 
         if self.pagination_enabled: 
             next_page = response.css('.a-last > a::attr(href)').get()
