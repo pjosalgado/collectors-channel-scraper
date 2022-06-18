@@ -3,7 +3,7 @@ project: 432550
 requirements:
   file: requirements.txt
 
-stack: scrapy:1.8-py3
+stack: scrapy:2.6
 
 apikeys: 
   default: $SHUB_API_KEY

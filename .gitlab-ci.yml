@@ -18,10 +18,8 @@ sast:
 scrapinghub:
     stage: deploy
     script:
-        - apt-get update
-        - apt-get install gcc rpl -y
         - pip install -r requirements.txt
-        - rpl '$SHUB_API_KEY' $SHUB_API_KEY scrapinghub.yml
+        - sed -i "s/\$SHUB_API_KEY/$SHUB_API_KEY/g" scrapinghub.yml
         - shub deploy
     only:
         - master
