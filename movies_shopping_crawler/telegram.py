@@ -7,6 +7,7 @@
 
 import logging as log
 import requests
+from scrapy.exceptions import DropItem
 
 class TelegramPipeline(object): 
 
@@ -27,10 +28,14 @@ class TelegramPipeline(object):
 
         log.info('Processing in TelegramPipeline item <{}>'.format(item))
 
+        notification = item['notification']
+
+        if notification is None: 
+            raise DropItem('Status not relevant in new item <{}>'.format(item))
+    
         title = item['title']
         title_type = item['title_type']
         spider_pretty_name = item['spider_pretty_name']
-        notification = item['notification']
         url = item['url']
         cover_url = item['cover_url']
 

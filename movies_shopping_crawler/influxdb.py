@@ -8,7 +8,6 @@
 import logging as log
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
-from scrapy.exceptions import DropItem
 
 class InfluxDbPipeline(object): 
 
@@ -54,7 +53,6 @@ class InfluxDbPipeline(object):
         title_type = item['title_type']
         timestamp = item['timestamp']
         price = item['price']
-        notification = item['notification']
 
         self.data.append({
             'measurement': measurement,
@@ -68,7 +66,4 @@ class InfluxDbPipeline(object):
             }
         })
 
-        if notification is None: 
-            raise DropItem('Status not relevant in new item <{}>'.format(item))
-    
         return item
