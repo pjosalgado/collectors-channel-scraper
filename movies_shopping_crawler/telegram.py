@@ -28,18 +28,23 @@ class TelegramPipeline(object):
 
         log.info('Processing in TelegramPipeline item <{}>'.format(item))
 
-        notification = item['notification']
+        old_item = item['old_item']
+        price = item['price']
 
-        if notification is None: 
-            raise DropItem('Status not relevant in new item <{}>'.format(item))
-    
+        if old_item: 
+            notification = get_notification_status(old_item, item)
+        else: 
+            notification = '🆕'
+
+        if notification is None or price == 'Indisponível': 
+            raise DropItem('Status not relevant in item <{}>'.format(item))
+
         title = item['title']
         title_type = item['title_type']
         spider_pretty_name = item['spider_pretty_name']
         url = item['url']
         cover_url = item['cover_url']
 
-        price = item['price']
         price = price.replace('.', ',')
 
         # Emojis: https://emojipedia.org/
@@ -62,3 +67,24 @@ class TelegramPipeline(object):
         requests.post(url, data)
 
         return item
+
+
+def get_notification_status(old, new): 
+
+    old_price = old['price']
+    new_price = new['price']
+
+    try: 
+        if float(new_price) < float(old_price): 
+            old_price = old_price.replace('.', ',')
+            return '⬇️ antes era R$ {}'.format(old_price)
+        else: 
+            return None
+    except: 
+        if old_price == 'Indisponível': 
+            return '🔄 antes estava indisponível'
+        elif new_price != old_price: 
+            old_price = old_price.replace('.', ',')
+            return '🔄 antes era R$ {}'.format(old_price)
+        else: 
+            return None

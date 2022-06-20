@@ -43,43 +43,10 @@ class MongoDbPipeline(object):
             item.update({'_id': id_item_found})
             self.col.update_one({'_id': id_item_found}, {'$set': dict(item)})
             log.info('Updated item with id <{}> using <{}>'.format(id_item_found, item))
-
-            new_status = get_notification_status(item_found, item)
-
-            if new_status and item['price'] != 'Indisponível': 
-                item.update({'notification': new_status})
-            else: 
-                item.update({'notification': None})
-
+            item.update({'old_item': item_found})
         else: 
             id_item_new = self.col.insert_one(dict(item)).inserted_id
             item.update({'_id': id_item_new})
             log.info('Inserted item <{}> with id <{}>'.format(item, id_item_new))
 
-            if item['price'] != 'Indisponível': 
-                item.update({'notification': '🆕'})
-            else: 
-                item.update({'notification': None})
-        
         return item
-
-
-def get_notification_status(old, new): 
-
-    old_price = old['price']
-    new_price = new['price']
-
-    try: 
-        if float(new_price) < float(old_price): 
-            old_price = old_price.replace('.', ',')
-            return '⬇️ antes era R$ {}'.format(old_price)
-        else: 
-            return None
-    except: 
-        if old_price == 'Indisponível': 
-            return '🔄 antes estava indisponível'
-        elif new_price != old_price: 
-            old_price = old_price.replace('.', ',')
-            return '🔄 antes era R$ {}'.format(old_price)
-        else: 
-            return None        
