@@ -1,10 +1,10 @@
-scrapy==2.6.0
+scrapy==2.6.2
 scrapy-autounit==0.0.30
 shub==2.12.0
 pymongo==3.10.1
 dnspython==1.16.0
 pytz==2019.3
-pip>=19.2 # not directly required, pinned by Snyk to avoid a vulnerability
+pip>=19.2
 influxdb==5.3.1
 influxdb-client==1.13.0
-twisted>=22.4.0rc1 # not directly required, pinned by Snyk to avoid a vulnerability
+twisted>=22.4.0rc1
