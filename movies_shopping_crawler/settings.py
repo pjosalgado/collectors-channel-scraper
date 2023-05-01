@@ -97,3 +97,6 @@ AUTOUNIT_DONT_RECORD_SPIDER_ATTRS = ['pagination_enabled']
 
 # Telegram
 TELEGRAM_PARSE_MODE = 'Markdown'
+
+# Notification Discount
+NOTIFICATION_DISCOUNT_PERCENTAGE = 10

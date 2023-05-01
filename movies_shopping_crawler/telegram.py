@@ -11,17 +11,19 @@ from scrapy.exceptions import DropItem
 
 class TelegramPipeline(object): 
 
-    def __init__(self, token, chat_id, parse_mode): 
+    def __init__(self, token, chat_id, parse_mode, discount_percentage): 
         self.token = token
         self.chat_id = chat_id
         self.parse_mode = parse_mode
+        self.discount_percentage = discount_percentage
 
     @classmethod
     def from_crawler(cls, crawler): 
         return cls(
             token = crawler.settings.get('TELEGRAM_TOKEN'), 
             chat_id = crawler.settings.get('TELEGRAM_CHAT_ID'), 
-            parse_mode = crawler.settings.get('TELEGRAM_PARSE_MODE')
+            parse_mode = crawler.settings.get('TELEGRAM_PARSE_MODE'), 
+            discount_percentage = crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE')
         )
 
     def process_item(self, item, spider): 
@@ -32,7 +34,7 @@ class TelegramPipeline(object):
         price = item['price']
 
         if old_item: 
-            notification = get_notification_status(old_item, item)
+            notification = get_notification_status(self, old_item, item)
         else: 
             notification = '🆕'
 
@@ -69,13 +71,18 @@ class TelegramPipeline(object):
         return item
 
 
-def get_notification_status(old, new): 
+def get_notification_status(self, old, new): 
 
-    old_price = old['price']
     new_price = new['price']
+    old_price = old['price']
 
     try: 
-        if float(new_price) < float(old_price): 
+        new_price_f = float(new_price)
+        old_price_f = float(old_price)
+
+        notify_discount = new_price_f < (old_price_f - (old_price_f * (self.discount_percentage/100)))
+
+        if notify_discount: 
             old_price = old_price.replace('.', ',')
             return '⬇️ antes era R$ {}'.format(old_price)
         else: 

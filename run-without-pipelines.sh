@@ -6,13 +6,13 @@ settings='-s ITEM_PIPELINES={}'
 mkdir -p logs
 rm -r -f autounit
 
-# echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Amazon...'
-# touch logs/amazon.log
-# scrapy crawl amazon ${args} ${settings} -o outs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').csv &>logs/amazon.log
+echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Amazon...'
+touch logs/amazon.log
+scrapy crawl amazon ${args} ${settings} -o outs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').csv &>logs/amazon.log
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Colecione Clássicos...'
-touch logs/colecioneclassicos.log
-scrapy crawl colecioneclassicos ${args} ${settings} -o outs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').csv &>logs/colecioneclassicos.log
+# echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Colecione Clássicos...'
+# touch logs/colecioneclassicos.log
+# scrapy crawl colecioneclassicos ${args} ${settings} -o outs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').csv &>logs/colecioneclassicos.log
 
 # echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Fam DVD...'
 # touch logs/famdvd.log
