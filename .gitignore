@@ -183,3 +183,4 @@ logs
 venv
 .vscode
 outs
+temp

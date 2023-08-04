@@ -1,21 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for movies_shopping_crawler project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     https://docs.scrapy.org/en/latest/topics/settings.html
-#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
 BOT_NAME = 'movies_shopping_crawler'
 
 SPIDER_MODULES = ['movies_shopping_crawler.spiders']
 NEWSPIDER_MODULE = 'movies_shopping_crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:90.0) Gecko/20100101 Firefox/90.0'
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -65,8 +56,8 @@ SPIDER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'movies_shopping_crawler.mongodb.MongoDbPipeline': 300, 
-    'movies_shopping_crawler.influxdb.InfluxDbPipeline': 400, 
-    'movies_shopping_crawler.telegram.TelegramPipeline': 500
+    # 'movies_shopping_crawler.influxdb.InfluxDbPipeline': 400, 
+    'movies_shopping_crawler.discord.DiscordPipeline': 500
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

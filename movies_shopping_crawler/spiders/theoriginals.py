@@ -8,13 +8,32 @@ class TheOriginalsSpider(scrapy.Spider):
     name = 'theoriginals'
 
     start_urls = [
-        'https://www.theoriginals.com.br/filmes-pre-venda', 
-        'https://www.theoriginals.com.br/filmes-lancamentos', 
-        'https://www.theoriginals.com.br/filmes-promocoes', 
-        'https://www.theoriginals.com.br/filmes-promocoes-de-dvd', 
-        'https://www.theoriginals.com.br/filmes-promocoes-em-blu-ray', 
-        'https://www.theoriginals.com.br/filmes-promocoes-em-blu-ray-3d', 
-        'https://www.theoriginals.com.br/filmes-promocoes-series-e-colecoes'
+        # PRÉ-VENDA
+        'https://www.theoriginals.com.br/filmes-pre-venda',
+
+        # # LANÇAMENTOS
+        'https://www.theoriginals.com.br/filmes-lancamentos',
+
+        # PROMOÇÕES
+        'https://www.theoriginals.com.br/filmes-promocoes',
+
+        # # EDIÇÕES IMPORTADAS
+        'https://www.theoriginals.com.br/edicoes-importadas',
+
+        # # EXCLUSIVOS ED ESPECIAIS
+        'https://www.theoriginals.com.br/exclusivos',
+
+        # # 4K UHD
+        'https://www.theoriginals.com.br/4k-uhd',
+
+        # # BLU-RAY 3D
+        'https://www.theoriginals.com.br/filmes-blu-ray-3d',
+
+        # # COLEÇÃO
+        'https://www.theoriginals.com.br/filmes-colecao',
+
+        # # STEELBOOK
+        'https://www.theoriginals.com.br/steelbook',
     ]
 
 

@@ -8,10 +8,17 @@ class FamDvdSpider(scrapy.Spider):
     name = 'famdvd'
 
     start_urls = [
-        'https://www.famdvd.com.br/blu-ray-4k-e-steelbook.html', 
+        # Exclusivos
+        'https://www.famdvd.com.br/exclusivos-1.html', 
+
+        # Lançamentos
+        'https://www.famdvd.com.br/lancamento.html', 
+
+        # Pré-venda
         'https://www.famdvd.com.br/pre-venda.html', 
-        'https://www.famdvd.com.br/novidades.html', 
-        'https://www.famdvd.com.br/catalogsearch/result/?q=Exclusivo'
+
+        # Busca "4K"
+        'https://www.famdvd.com.br/catalogsearch/result/?q=4K',
     ]
 
 

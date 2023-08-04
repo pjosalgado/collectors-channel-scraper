@@ -7,6 +7,9 @@ export INFLUXDB_ORG="user"
 export INFLUXDB_TOKEN="password"
 export INFLUXDB_BUCKET="database"
 
+# Discord
+export DISCORD_URL="webhook"
+
 # Telegram
 export TELEGRAM_TOKEN="token"
 export TELEGRAM_CHAT_ID="@chat"

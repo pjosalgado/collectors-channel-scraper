@@ -8,14 +8,26 @@ class VideoPerolaSpider(scrapy.Spider):
     name = 'videoperola'
 
     start_urls = [
-        'https://www.videoperola.com.br/pre-venda', 
-        'https://www.videoperola.com.br/lancamentos', 
-        'https://www.videoperola.com.br/promocoes', 
-        'https://www.videoperola.com.br/promocoes?O=OrderByPriceASC', 
-        'https://www.videoperola.com.br/promocoes?O=OrderByTopSaleDESC', 
-        'https://www.videoperola.com.br/promocoes?O=OrderByReviewRateDESC', 
-        'https://www.videoperola.com.br/promocoes?O=OrderByReleaseDateDESC', 
-        'https://www.videoperola.com.br/promocoes?O=OrderByBestDiscountDESC'
+        # Exclusivos
+        'https://videoperola.com.br/todas-as-categorias/filmes-e-series/exclusivos/',
+
+        # Lançamentos
+        'https://videoperola.com.br/todas-as-categorias/filmes-e-series/lancamentos/',
+
+        # Pré-Venda
+        'https://videoperola.com.br/todas-as-categorias/filmes-e-series/pre-venda/',
+
+        # Blu-ray 3D
+        'https://videoperola.com.br/todas-as-categorias/filmes-e-series/blu-ray-3d/',
+
+        # Steelbook
+        'https://videoperola.com.br/todas-as-categorias/filmes-e-series/steelbook/',
+
+        # Coleções
+        'https://videoperola.com.br/todas-as-categorias/filmes-e-series/colecoes/',
+        
+        # Busca "4K"
+        'https://videoperola.com.br/search/?q=4K',
     ]
 
 

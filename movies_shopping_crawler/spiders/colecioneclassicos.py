@@ -8,12 +8,29 @@ class ColecioneClassicosSpider(scrapy.Spider):
     name = 'colecioneclassicos'
 
     start_urls = [
-        'https://www.colecioneclassicos.com.br/novidades', 
-        'https://www.colecioneclassicos.com.br/blu-ray-noVidades--', 
-        'https://www.colecioneclassicos.com.br/box-e-colecoes', 
-        'https://www.colecioneclassicos.com.br/pre-venda', 
-        'https://www.colecioneclassicos.com.br/lancamentos', 
-        'https://www.colecioneclassicos.com.br/exclusivos'
+        # Box e Coleções
+        'https://www.colecioneclassicos.com.br/box-e-colecoes',
+
+        # Combos
+        'https://www.colecioneclassicos.com.br/combos--',
+
+        # Blu-rays
+        'https://www.colecioneclassicos.com.br/blu-rays',
+
+        # Pré - Venda
+        'https://www.colecioneclassicos.com.br/pre-venda',
+
+        # Lançamentos
+        'https://www.colecioneclassicos.com.br/lancamentos',
+
+        # Exclusivos
+        'https://www.colecioneclassicos.com.br/exclusivos',
+
+        # Cinema de todas as épocas
+        'https://www.colecioneclassicos.com.br/cinema-de-todas-as-epocas',
+
+        # Busca "4K"
+        'https://www.colecioneclassicos.com.br/buscar?q=4K',
     ]
 
 

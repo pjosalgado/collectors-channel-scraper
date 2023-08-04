@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-
 import logging as log
 import requests
 from scrapy.exceptions import DropItem
@@ -28,14 +23,13 @@ class TelegramPipeline(object):
 
         log.info('Processing in TelegramPipeline item <{}>'.format(item))
 
-        old_item = item['old_item']
         price = item['price']
 
-        if old_item: 
-            notification = get_notification_status(old_item, item)
+        if 'old_item' in item: 
+            notification = get_notification_status(item['old_item'], item)
         else: 
             notification = '🆕'
-
+    
         if notification is None or price == 'Indisponível': 
             raise DropItem('Status not relevant in item <{}>'.format(item))
 
@@ -44,10 +38,7 @@ class TelegramPipeline(object):
         spider_pretty_name = item['spider_pretty_name']
         url = item['url']
         cover_url = item['cover_url']
-
         price = price.replace('.', ',')
-
-        # Emojis: https://emojipedia.org/
 
         message = '*{}*'.format(title)
         message += '\n📀 {}'.format(title_type) if title_type != None else ''
@@ -63,7 +54,7 @@ class TelegramPipeline(object):
             'caption': message
         }
 
-        log.info('Sending to Telegram the message <{}>'.format(data))
+        log.info('Sending message to Telegram...')
         requests.post(url, data)
 
         return item
