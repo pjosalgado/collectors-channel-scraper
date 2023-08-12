@@ -33,7 +33,7 @@ class DiscordPipeline(object):
         title_type = item['title_type']
         spider_pretty_name = item['spider_pretty_name']
         url = item['url']
-        # cover_url = item['cover_url']
+        cover_url = item['cover_url']
         price = price.replace('.', ',')
 
         message = '**{}**'.format(title)
@@ -42,12 +42,22 @@ class DiscordPipeline(object):
         message += '\n{}'.format(notification)
         message += '\n:link: {}'.format(url)
 
-        data = {
-            'content': message
+        json = {
+            'content': message,
+            'embeds': [{
+                'image': {
+                    'url': cover_url
+                }
+            }]
+        }
+
+        headers = {
+            'Content-Disposition': 'form-data',
+            'Content-Type': 'application/json'
         }
 
         log.info('Sending message to Discord...')
-        requests.post(self.url, data)
+        requests.post(self.url, json=json, headers=headers)
 
         return item
 
