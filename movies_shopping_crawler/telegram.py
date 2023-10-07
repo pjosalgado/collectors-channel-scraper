@@ -21,6 +21,7 @@ class TelegramPipeline(object):
             discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE'))
         )
 
+
     def process_item(self, item, spider): 
 
         log.info('Processing in TelegramPipeline item <{}>'.format(item))

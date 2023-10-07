@@ -11,28 +11,28 @@ class TheOriginalsSpider(scrapy.Spider):
         # PRÉ-VENDA
         'https://www.theoriginals.com.br/filmes-pre-venda',
 
-        # # LANÇAMENTOS
+        # LANÇAMENTOS
         'https://www.theoriginals.com.br/filmes-lancamentos',
 
         # PROMOÇÕES
         'https://www.theoriginals.com.br/filmes-promocoes',
 
-        # # EDIÇÕES IMPORTADAS
+        # EDIÇÕES IMPORTADAS
         'https://www.theoriginals.com.br/edicoes-importadas',
 
-        # # EXCLUSIVOS ED ESPECIAIS
+        # EXCLUSIVOS ED ESPECIAIS
         'https://www.theoriginals.com.br/exclusivos',
 
-        # # 4K UHD
+        # 4K UHD
         'https://www.theoriginals.com.br/4k-uhd',
 
-        # # BLU-RAY 3D
+        # BLU-RAY 3D
         'https://www.theoriginals.com.br/filmes-blu-ray-3d',
 
-        # # COLEÇÃO
+        # COLEÇÃO
         'https://www.theoriginals.com.br/filmes-colecao',
 
-        # # STEELBOOK
+        # STEELBOOK
         'https://www.theoriginals.com.br/steelbook',
     ]
 

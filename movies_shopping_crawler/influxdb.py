@@ -21,11 +21,13 @@ class InfluxDbPipeline(object):
             bucket = crawler.settings.get('INFLUXDB_BUCKET')
         )
 
+
     def open_spider(self, spider): 
         self.client = InfluxDBClient(url=self.url, token=self.token)
         self.write_api = self.client.write_api(write_options=SYNCHRONOUS)
         log.info('Opened InfluxDB connection to <{}>'.format(spider.name))
         self.data = []
+
 
     def close_spider(self, spider): 
         if self.client and self.write_api: 
@@ -36,6 +38,7 @@ class InfluxDbPipeline(object):
             log.info('Closed InfluxDB connection to <{}>'.format(spider.name))
         else: 
             log.info('InfluxDB connection already closed to <{}>'.format(spider.name))
+
 
     def process_item(self, item, spider):
 
@@ -49,16 +52,17 @@ class InfluxDbPipeline(object):
         timestamp = item['timestamp']
         price = item['price']
 
-        self.data.append({
-            'measurement': measurement,
-            'tags': {
-                'title': title, 
-                'title_type': title_type
-            },
-            'time': timestamp,
-            'fields': {
-                'price': price
-            }
-        })
+        if price != 'Indisponível': 
+            self.data.append({
+                'measurement': measurement,
+                'tags': {
+                    'title': title, 
+                    'title_type': title_type
+                },
+                'time': timestamp,
+                'fields': {
+                    'price': float(price)
+                }
+            })
 
         return item

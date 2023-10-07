@@ -184,3 +184,4 @@ venv
 .vscode
 outs
 temp
+.env

@@ -14,11 +14,13 @@ class MongoDbPipeline(object):
             url = crawler.settings.get('MONGO_URL')
         )
 
+
     def open_spider(self, spider): 
         self.client = MongoClient(self.url)
         db = self.client.movies
         self.col = db[spider.name]
         log.info('Opened MongoDB connection to <{}>'.format(spider.name))
+
 
     def close_spider(self, spider): 
         if self.client: 
@@ -26,6 +28,7 @@ class MongoDbPipeline(object):
             log.info('Closed MongoDB connection to <{}>'.format(spider.name))
         else: 
             log.info('MongoDB connection already closed to <{}>'.format(spider.name))
+
 
     def process_item(self, item, spider): 
 

@@ -1,28 +1,28 @@
 image: python:3.9-slim
 
 stages:
-    - test
-    - deploy
+  - test
+  - deploy
 
 include:
-    - template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
 
 autounit:
-    stage: test
-    script:
-        - python -m unittest
+  stage: test
+  script:
+    - python -m unittest
 
 sast:
   stage: test
 
 zyte:
-    stage: deploy
-    script:
-        - pip install -r requirements.txt
-        - sed -i "s/\$SHUB_API_KEY/$SHUB_API_KEY/g" scrapinghub.yml
-        - shub deploy
-    only:
-        - master
-    environment:
-        name: zyte
-        url: $ENV_URL
+  stage: deploy
+  script:
+    - pip install -r requirements.txt
+    - sed -i "s/\$SHUB_API_KEY/$SHUB_API_KEY/g" scrapinghub.yml
+    - shub deploy
+  only:
+    - master
+  environment:
+    name: zyte
+    url: $ENV_URL

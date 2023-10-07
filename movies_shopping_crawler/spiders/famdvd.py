@@ -49,10 +49,10 @@ class FamDvdSpider(scrapy.Spider):
 
         for movie_selector in response.css('li.item'): 
             
-            full_title = movie_selector.css('h2 > a::text').get().strip()
+            full_title = movie_selector.css('h3 > a::text').get().strip()
             title, title_type = get_title_details(full_title)
 
-            url = movie_selector.css('h2 > a::attr(href)').get().strip()
+            url = movie_selector.css('h3 > a::attr(href)').get().strip()
             
             price = movie_selector.css('.special-price > .price::text').get()
             price = movie_selector.css('.price::text').get() if price is None else price

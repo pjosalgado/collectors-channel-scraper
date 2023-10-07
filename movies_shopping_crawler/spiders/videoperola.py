@@ -31,28 +31,48 @@ class VideoPerolaSpider(scrapy.Spider):
     ]
 
 
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs): 
+
+        try: 
+            pagination_enabled = kwargs['PAGINATION_ENABLED'] == "True"
+        except: 
+            pagination_enabled = False
+        
+        spider = cls(
+            *args, 
+            pagination_enabled=pagination_enabled, 
+            **kwargs
+        )
+        
+        spider._set_crawler(crawler)
+        
+        return spider
+
+
     def parse(self, response): 
 
         self.log('visited <{}>'.format(response.url))
 
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.filmes-e-series'): 
+        for movie_selector in response.css('.js-item-product'): 
 
-            full_title = movie_selector.css('h3 > a::text').get().strip()
+            full_title = movie_selector.css('.item-name::text').get().strip()
             title, title_type = get_title_details(full_title)
 
-            url = movie_selector.css('h3 > a::attr(href)').get().strip()
+            url = movie_selector.css('.item-link::attr(href)').get().strip()
 
-            price = movie_selector.css('.newPrice::text').get()
-            price = movie_selector.css('.bestPrice > em::text').get() if price is None else price
+            price = movie_selector.css('.item-price-secondary::text').get()
             price = price.strip() if price is not None else 'Indisponível'
 
             if price != 'Indisponível': 
-                price = price.replace(' ', '').replace('R$', '').replace(',', '.')
+                price = price.replace(' ', '').replace('R$', '').replace(',', '.').replace('por', '').replace('\n', '').strip()
                 price = '%.2f' % float(price)
 
-            cover_url = movie_selector.css('img::attr(src)').get().strip()
+            cover_url = movie_selector.css('.js-item-image::attr(data-srcset)').get().strip()
+            cover_url = cover_url.split(' ')[0]
+            cover_url = 'https:' + cover_url
 
             yield {
                 'spider': self.name, 
@@ -66,6 +86,15 @@ class VideoPerolaSpider(scrapy.Spider):
                 'price': price, 
                 'cover_url': cover_url
             }
+
+        if self.pagination_enabled: 
+            next_page = response.css('.pagination-arrow-link::attr(href)').get()
+            if next_page: 
+                next_page = response.urljoin(next_page.strip())
+                self.log('next page is <{}>'.format(next_page))
+                yield scrapy.Request(next_page)
+            else: 
+                self.log('next page not found')
 
 
 def get_title_details(full_title, default_type = 'Desconhecido'): 
