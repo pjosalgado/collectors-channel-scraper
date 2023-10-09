@@ -24,6 +24,10 @@ class ImusicBrSpider(scrapy.Spider):
         'https://imusic.br.com/exposure/11084/dvd-e-blu-ray-mais-vendido',
     ]
 
+    ignored_categories = [
+        'Paperback Book',
+    ]
+
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs): 
@@ -68,18 +72,19 @@ class ImusicBrSpider(scrapy.Spider):
 
             cover_url = movie_selector.css('.item-cover::attr(src)').get().strip()
 
-            yield {
-                'spider': self.name, 
-                'spider_pretty_name': 'iMusic BR', 
-                'spider_url': response.url, 
-                'timestamp': timestamp, 
-                'full_title': full_title, 
-                'title': title, 
-                'title_type': title_type, 
-                'url': url, 
-                'price': price, 
-                'cover_url': cover_url
-            }
+            if title_type not in self.ignored_categories: 
+                yield {
+                    'spider': self.name, 
+                    'spider_pretty_name': 'iMusic BR', 
+                    'spider_url': response.url, 
+                    'timestamp': timestamp, 
+                    'full_title': full_title, 
+                    'title': title, 
+                    'title_type': title_type, 
+                    'url': url, 
+                    'price': price, 
+                    'cover_url': cover_url
+                }
 
         if self.pagination_enabled: 
             next_page = response.css('.btn-sm::attr(href)').get()

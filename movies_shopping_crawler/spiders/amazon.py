@@ -83,7 +83,13 @@ class AmazonSpider(scrapy.Spider):
         'Vestuário',
         'Videogame',
         'Xbox One',
-        'Áudio, Cassete'
+        'Áudio, Cassete',
+        'Nintendo 3DS',
+        'PlayStation 5',
+        'Relógio',
+        'Sony PSP',
+        'UMD para PSP',
+        'Xbox 360',
     ]
 
 

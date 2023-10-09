@@ -55,8 +55,8 @@ SPIDER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'movies_shopping_crawler.mongodb.MongoDbPipeline': 300, 
-    # 'movies_shopping_crawler.influxdb.InfluxDbPipeline': 400, 
+    'movies_shopping_crawler.mongodb.MongoDbPipeline': 300,
+    'movies_shopping_crawler.influxdb.InfluxDbPipeline': 400,
     'movies_shopping_crawler.discord.DiscordPipeline': 500
 }
 
