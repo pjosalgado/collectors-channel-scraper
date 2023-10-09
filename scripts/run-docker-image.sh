@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -d --name collectors-channel-scraper --env-file=.env paulosalgado/collectors-channel-scraper:2.1.0
+docker run -d --name collectors-channel-scraper --env-file=.env paulosalgado/collectors-channel-scraper:2.3.0

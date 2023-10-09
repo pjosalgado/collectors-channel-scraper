@@ -23,6 +23,9 @@ scrapy crawl colecioneclassicos ${args} ${settings} -o outs/colecioneclassicos-$
 echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Fam DVD...'
 scrapy crawl famdvd ${args} ${settings} -o outs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').csv
 
+echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping iMusic BR...'
+scrapy crawl imusicbr ${args} ${settings} -o outs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').csv
+
 echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping The Originals...'
 scrapy crawl theoriginals ${args} ${settings} -o outs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').csv
 
