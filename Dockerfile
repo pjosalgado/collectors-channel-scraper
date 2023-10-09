@@ -1,5 +1,7 @@
 FROM python:3.9-slim
+
 LABEL maintainer="Paulo Salgado <pjosalgado@gmail.com>"
+LABEL version="2.2.0"
 
 WORKDIR /python-docker
 

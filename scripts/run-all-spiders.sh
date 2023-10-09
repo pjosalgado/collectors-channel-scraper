@@ -26,6 +26,9 @@ scrapy crawl famdvd ${args} ${settings} -o outs/famdvd-$(date +'%Y-%m-%d-%H-%M-%
 echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping The Originals...'
 scrapy crawl theoriginals ${args} ${settings} -o outs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').csv
 
+echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Versátil...'
+scrapy crawl versatil ${args} ${settings} -o outs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').csv
+
 echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Vídeo Pérola...'
 scrapy crawl videoperola ${args} ${settings} -o outs/videoperola-$(date +'%Y-%m-%d-%H-%M-%S').csv
 
