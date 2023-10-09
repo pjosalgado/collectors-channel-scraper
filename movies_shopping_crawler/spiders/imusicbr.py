@@ -63,7 +63,7 @@ class ImusicBrSpider(scrapy.Spider):
             price = price.strip() if price is not None else 'Indisponível'
 
             if price != 'Indisponível': 
-                price = price.replace(' ', '').replace('R$', '').replace(',', '.').strip()
+                price = price.replace(' ', '').replace('R$', '').replace('.', '').replace(',', '.').strip()
                 price = '%.2f' % float(price)
 
             cover_url = movie_selector.css('.item-cover::attr(src)').get().strip()
