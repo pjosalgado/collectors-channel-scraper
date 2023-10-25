@@ -86,8 +86,9 @@ class ImusicBrSpider(scrapy.Spider):
                     'cover_url': cover_url
                 }
 
-        if self.pagination_enabled: 
-            next_page = response.css('.btn-sm::attr(href)').get()
+        if self.pagination_enabled:
+            next_page = response.css('.navbar-right > .btn-primary')
+            next_page = next_page[1].css('::attr(href)').get() if len(next_page > 1) else None
             if next_page: 
                 next_page = response.urljoin(next_page.strip())
                 self.log('next page is <{}>'.format(next_page))
