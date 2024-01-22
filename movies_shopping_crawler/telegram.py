@@ -6,11 +6,12 @@ from scrapy.exceptions import DropItem
 
 class TelegramPipeline(object): 
 
-    def __init__(self, token, chat_id, parse_mode, discount_percentage): 
+    def __init__(self, token, chat_id, parse_mode, discount_percentage, restock_notification): 
         self.token = token
         self.chat_id = chat_id
         self.parse_mode = parse_mode
         self.discount_percentage = discount_percentage
+        self.restock_notification = restock_notification
 
     @classmethod
     def from_crawler(cls, crawler): 
@@ -18,7 +19,8 @@ class TelegramPipeline(object):
             token = crawler.settings.get('TELEGRAM_TOKEN'), 
             chat_id = crawler.settings.get('TELEGRAM_CHAT_ID'), 
             parse_mode = crawler.settings.get('TELEGRAM_PARSE_MODE'),
-            discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE'))
+            discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE')),
+            restock_notification = crawler.settings.get('NOTIFICATION_RESTOCK') == "True"
         )
 
 
@@ -78,10 +80,7 @@ def get_notification_status(self, old, new):
                 old_price_value = old_price_value.replace('.', ',')
                 return '⬇️ {}% - antes era R$ {}'.format(percentage_difference, old_price_value)
     except: 
-        if old_price_value == 'Indisponível' and new_price_value != 'Indisponível': 
+        if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
             return '🔄 antes estava indisponível'
-        elif new_price_value != old_price_value: 
-            old_price_value = old_price_value.replace('.', ',')
-            return '🔄 antes era R$ {}'.format(old_price_value)
 
     return None

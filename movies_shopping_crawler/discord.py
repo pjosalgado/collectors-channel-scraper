@@ -6,15 +6,17 @@ from scrapy.exceptions import DropItem
 
 class DiscordPipeline(object): 
 
-    def __init__(self, url, discount_percentage): 
+    def __init__(self, url, discount_percentage, restock_notification): 
         self.url = url
         self.discount_percentage = discount_percentage
+        self.restock_notification = restock_notification
 
     @classmethod
     def from_crawler(cls, crawler): 
         return cls(
             url = crawler.settings.get('DISCORD_URL'),
-            discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE'))
+            discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE')),
+            restock_notification = crawler.settings.get('NOTIFICATION_RESTOCK') == "True"
         )
 
 
@@ -80,10 +82,7 @@ def get_notification_status(self, old, new):
                 old_price_value = old_price_value.replace('.', ',')
                 return ':arrow_down: {}% - antes era R$ {}'.format(percentage_difference, old_price_value)
     except: 
-        if old_price_value == 'Indisponível' and new_price_value != 'Indisponível': 
+        if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
             return ':arrows_counterclockwise: antes estava indisponível'
-        elif new_price_value != old_price_value: 
-            old_price_value = old_price_value.replace('.', ',')
-            return ':arrows_counterclockwise: antes era R$ {}'.format(old_price_value)
 
     return None

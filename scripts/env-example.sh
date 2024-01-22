@@ -1,15 +1,22 @@
+# Scraping
+PAGINATION_ENABLED=False
+
 # MongoDB
-export MONGO_URL="mongodb://user:password@url"
+MONGO_URL=
 
 # InfluxDB
-# export INFLUXDB_URL="http://url:port"
-# export INFLUXDB_ORG="user"
-# export INFLUXDB_TOKEN="password"
-# export INFLUXDB_BUCKET="database"
+# INFLUXDB_URL=
+# INFLUXDB_ORG=
+# INFLUXDB_TOKEN=
+# INFLUXDB_BUCKET=
 
-# Discord
-export DISCORD_URL="webhook"
+# Notification
+NOTIFICATION_DISCOUNT_PERCENTAGE=20
+NOTIFICATION_RESTOCK=False
 
-# Telegram
-# export TELEGRAM_TOKEN="token"
-# export TELEGRAM_CHAT_ID="@chat"
+# Notification - Discord
+DISCORD_URL=
+
+# Notification - Telegram
+# TELEGRAM_TOKEN=
+# TELEGRAM_CHAT_ID=
