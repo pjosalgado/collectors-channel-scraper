@@ -10,4 +10,4 @@ influxdb-client==1.13.0
 twisted==22.10.0
 setuptools>=65.5.1
 pyopenssl==22.0.0
-cryptography==38.0.4
+cryptography==42.0.2
