@@ -8,6 +8,7 @@ pip>=19.2
 influxdb==5.3.1
 influxdb-client==1.13.0
 twisted==22.10.0
-setuptools>=65.5.1
+setuptools>=70.0.0
 pyopenssl==22.0.0
 cryptography==38.0.4
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
