@@ -2,12 +2,13 @@ cryptography==42.0.4
 dnspython==2.6.0rc1
 influxdb==5.3.1
 influxdb-client==1.13.0
-pip>=19.2
+pip>=24.1.2
+pyopenssl>=23.2.0
 pymongo==4.6.3
-pyopenssl >= 23.2.0
 pytz==2019.3
-scrapy==2.11.1
-scrapy-autounit==0.0.30
+scrapinghub-entrypoint-scrapy>=0.14.1
+scrapy==2.9.0
+scrapy-autounit==0.0.32
 setuptools>=65.5.1
 shub==2.12.0
 twisted==22.10.0
