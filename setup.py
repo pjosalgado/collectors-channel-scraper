@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'project',
-    version = '2.6.0',
+    version = '2.6.1',
     packages = find_packages(),
     entry_points = {
         'scrapy': [
