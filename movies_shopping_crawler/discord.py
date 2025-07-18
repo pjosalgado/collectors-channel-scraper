@@ -47,6 +47,10 @@ class DiscordPipeline(object):
         message += '\n{}'.format(notification)
         message += '\n:link: {}'.format(url)
 
+        if 'additional_info' in item:
+            additional_info = item['additional_info']
+            message += '\n:warning: {}'.format(additional_info)
+
         json = {
             'content': message,
             'embeds': [{

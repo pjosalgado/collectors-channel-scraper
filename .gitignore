@@ -185,3 +185,4 @@ venv
 outs
 temp
 .env
+.envrc

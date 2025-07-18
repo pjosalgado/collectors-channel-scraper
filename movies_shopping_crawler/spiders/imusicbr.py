@@ -83,7 +83,8 @@ class ImusicBrSpider(scrapy.Spider):
                     'title_type': title_type, 
                     'url': url, 
                     'price': price, 
-                    'cover_url': cover_url
+                    'cover_url': cover_url,
+                    'additional_info': '+ ~95% de impostos',
                 }
 
         if self.pagination_enabled:
