@@ -123,7 +123,7 @@ class AmazonSpider(scrapy.Spider):
 
         for movie_selector in result: 
             
-            title = movie_selector.css('.a-size-medium::text').get().strip()
+            title = movie_selector.css('.a-size-medium > span::text').get().strip()
 
             cover_url = movie_selector.css('img::attr(src)').get().strip()
 

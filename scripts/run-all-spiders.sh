@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 'Starting spiders...'
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🏃‍♂️ Starting spiders'
 
 args="-a PAGINATION_ENABLED=$PAGINATION_ENABLED"
 
@@ -12,29 +12,27 @@ notification_settings="-s NOTIFICATION_DISCOUNT_PERCENTAGE=$NOTIFICATION_DISCOUN
 additional_settings="-s AUTOUNIT_ENABLED=False"
 settings="${mongo_settings} ${influxdb_settings} ${discord_settings} ${telegram_settings} ${notification_settings} ${additional_settings}"
 
-mkdir -p logs
 rm -r -f autounit
+mkdir -p logs
+mkdir -p outputs
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Amazon...'
-scrapy crawl amazon ${args} ${settings} -o outs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').csv
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Amazon'
+scrapy crawl amazon ${args} ${settings} -o outputs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').log
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Colecione Clássicos...'
-scrapy crawl colecioneclassicos ${args} ${settings} -o outs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').csv
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Colecione Clássicos'
+scrapy crawl colecioneclassicos ${args} ${settings} -o outputs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').log
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Fam DVD...'
-scrapy crawl famdvd ${args} ${settings} -o outs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').csv
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Fam DVD'
+scrapy crawl famdvd ${args} ${settings} -o outputs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').log
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping iMusic BR...'
-scrapy crawl imusicbr ${args} ${settings} -o outs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').csv
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 iMusic BR'
+scrapy crawl imusicbr ${args} ${settings} -o outputs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').log
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping The Originals...'
-scrapy crawl theoriginals ${args} ${settings} -o outs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').csv
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 The Originals'
+scrapy crawl theoriginals ${args} ${settings} -o outputs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').log
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Versátil...'
-scrapy crawl versatil ${args} ${settings} -o outs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').csv
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Versátil'
+scrapy crawl versatil ${args} ${settings} -o outputs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').log
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- scraping Vídeo Pérola...'
-scrapy crawl videoperola ${args} ${settings} -o outs/videoperola-$(date +'%Y-%m-%d-%H-%M-%S').csv
-
-echo 'Process finished!'
+echo $(date +'%d/%m/%Y %H:%M:%S') '- ✅ Process finished!'
 exit 0
