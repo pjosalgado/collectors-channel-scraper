@@ -9,10 +9,10 @@ export NOTIFICATION_RESTOCK=False
 export MONGO_URL=
 
 # InfluxDB
-# export INFLUXDB_URL=
-# export INFLUXDB_ORG=
-# export INFLUXDB_TOKEN=
-# export INFLUXDB_BUCKET=
+export INFLUXDB_URL=
+export INFLUXDB_ORG=
+export INFLUXDB_TOKEN=
+export INFLUXDB_BUCKET=
 
 # Notification - Discord
 export DISCORD_URL=
