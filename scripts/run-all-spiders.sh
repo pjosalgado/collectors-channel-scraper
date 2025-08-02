@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo $(date +'%d/%m/%Y %H:%M:%S') '- 🏃‍♂️ Starting spiders'
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🏃 Starting spiders'
 
 args="-a PAGINATION_ENABLED=$PAGINATION_ENABLED"
 
