@@ -3,61 +3,26 @@ import scrapy
 from datetime import datetime
 import pytz
 
-class VersatilSpider(scrapy.Spider): 
+class VersatilSpider(scrapy.Spider):
 
     name = 'versatil'
+    color_theme_decimal = '15571223'
 
     start_urls = [
-        # Lançamentos
-        'https://www.versatilhv.com.br/categoria/lancamentos',
-
-        # Pré-venda de filmes
-        'https://www.versatilhv.com.br/categoria/pre-venda',
-
-        # Edições Especiais
-        'https://www.versatilhv.com.br/categoria/edicoes-especiais',
-
         # Promoção
         'https://www.versatilhv.com.br/categoria/promocao',
 
-        # Blu-Ray
-        'https://www.versatilhv.com.br/categoria/blu-ray',
+        # Raridades
+        'https://www.versatilhv.com.br/categoria/raridades',
 
-        # Clássicos Sci-FI
-        'https://www.versatilhv.com.br/categoria/colecoes/classicos-sci-fi',
+        # Pré-venda
+        'https://www.versatilhv.com.br/categoria/pre-venda',
 
-        # Filmes Coleção Folha
-        'https://www.versatilhv.com.br/categoria/colecoes/colecao-folha',
+        # Lançamentos
+        'https://www.versatilhv.com.br/categoria/lancamentos',
 
-        # Lovecraft No Cinema
-        'https://www.versatilhv.com.br/categoria/colecoes/lovecraft-no-cinema',
-
-        # Cinema Asiático
-        'https://www.versatilhv.com.br/categoria/colecoes/cinema-asiatico',
-
-        # Cinema Samurai
-        'https://www.versatilhv.com.br/categoria/colecoes/cinema-samurai',
-
-        # Cinema Brasileiro
-        'https://www.versatilhv.com.br/categoria/colecoes/cinema-brasileiro',
-
-        # Cinema Kung Fu
-        'https://www.versatilhv.com.br/categoria/colecoes/cinema-kung-fu',
-
-        # Cinema Yakuza
-        'https://www.versatilhv.com.br/categoria/colecoes/cinema-yakuza',
-
-        # Akira Kurosawa
-        'https://www.versatilhv.com.br/categoria/diretores/akira-kurosawa',
-
-        # Lars Von Trier
-        'https://www.versatilhv.com.br/categoria/diretores/lars-von-trier',
-
-        # Alfred Hitchcock
-        'https://www.versatilhv.com.br/categoria/diretores/alfred-hitchcock',
-
-        # Glauber Rocha
-        'https://www.versatilhv.com.br/categoria/diretores/glauber-rocha',
+        # Edições Especiais
+        'https://www.versatilhv.com.br/categoria/edicoes-especiais',
     ]
 
 
@@ -97,7 +62,8 @@ class VersatilSpider(scrapy.Spider):
                 'title_type': title_type, 
                 'url': url, 
                 'price': price, 
-                'cover_url': cover_url
+                'cover_url': cover_url,
+                'color_theme_decimal': self.color_theme_decimal
             }
 
 

@@ -3,16 +3,14 @@ import scrapy
 from datetime import datetime
 import pytz
 
-class AmazonSpider(scrapy.Spider): 
+class AmazonSpider(scrapy.Spider):
 
     name = 'amazon'
+    color_theme_decimal = '16736768'
 
     start_urls = [
         # Blu-ray - Popularidade
         'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AacIgbzmOjSmDNVsO5jUcv3O6m%2BltVqwiWDouNHSFPAI',
-
-        # Blu-ray - Preço: baixo a alto
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=price-asc-rank&dc&rnid=19392499011&ref=sr_st_price-asc-rank&ds=v1%3A0nHoSC0DFthpCVCWowU6jd0My6y%2BOLss%2Fim2hxigksM',
 
         # Blu-ray - Avaliação dos clientes (média)
         'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AVo%2BB8f211fCNbbqcXbHRCaQ1PngevKwUmtSs%2BO3Kmmc',
@@ -23,9 +21,6 @@ class AmazonSpider(scrapy.Spider):
         # DVD - Popularidade
         'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AiGwzt4iz80dTecPkbgNkJPd4HD7tn1nw8nb07%2Bu7Cj8',
 
-        # DVD - Preço: baixo a alto
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=price-asc-rank&dc&rnid=19392499011&ref=sr_st_price-asc-rank&ds=v1%3AtVcgC7vxmjK03ClKtEGBKvydM%2F8G1bB%2BAWpsXXS1roo',
-
         # DVD - Avaliação dos clientes (média)
         'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AONLj%2Bmx%2ByW38VYFsMwFpvruY0n1EKoWTuUfkxonslAI',
 
@@ -34,9 +29,6 @@ class AmazonSpider(scrapy.Spider):
 
         # Busca "SteelBook" - Destaques
         'https://www.amazon.com.br/s?k=Steelbook&i=dvd&ref=nb_sb_ss_ts-doa-p_2_4',
-
-        # Busca "SteelBook" - Preço: baixo a alto
-        'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=price-asc-rank&ref=sr_st_price-asc-rank&ds=v1%3Am9Gmh7Y6XB7Olkf9%2BcdLhdCT3He95JMtRr7UI0rnmNs',
 
         # Busca "SteelBook" - Avaliação dos clientes (média)
         'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=review-rank&ref=sr_st_review-rank&ds=v1%3AZCBb3OekUtQ6cRr2CzeHUlYZK2dfieBfO9vIJtELLew',
@@ -47,9 +39,6 @@ class AmazonSpider(scrapy.Spider):
         # Busca "4K" - Destaques
         'https://www.amazon.com.br/s?k=4K&i=dvd&s=relevancerank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_relevancerank&ds=v1%3ATYqaoTfv1pNBrMcY8%2BmfDipx0297McbkQLaHkOTqO5I',
 
-        # Busca "4K" - Preço: baixo a alto
-        'https://www.amazon.com.br/s?k=4K&i=dvd&s=price-asc-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_price-asc-rank&ds=v1%3AyXqSDvKRgAP08INdzUDwGtWuUXGh6bdhxNSkKEqOMKs',
-
         # Busca "4K" - Avaliação dos clientes (média)
         'https://www.amazon.com.br/s?k=4K&i=dvd&s=review-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_review-rank&ds=v1%3AXMWJ8JjsGkGzdGuovrAtl0iIvNBWzD8iGqKojdwUQgg',
 
@@ -58,8 +47,8 @@ class AmazonSpider(scrapy.Spider):
     ]
 
     ignored_categories = [
-        'Acessório de telefone sem fio', 
-        'CD de áudio', 
+        'Acessório de telefone sem fio',
+        'CD de áudio',
         'Eletrônicos',
         'CD de MP3',
         'CD multimídia',
@@ -142,7 +131,8 @@ class AmazonSpider(scrapy.Spider):
                         'title_type': title_type_small_edition, 
                         'url': url_small_edition, 
                         'price': price_small_edition, 
-                        'cover_url': cover_url
+                        'cover_url': cover_url,
+                        'color_theme_decimal': self.color_theme_decimal
                     }
                 else: 
                     self.log('ignoring title due to filter {} - {}'.format(title_type_small_edition, full_title_small_edition))
@@ -162,7 +152,8 @@ class AmazonSpider(scrapy.Spider):
                         'title_type': title_type_micro_edition, 
                         'url': url_micro_edition, 
                         'price': price_micro_edition, 
-                        'cover_url': cover_url
+                        'cover_url': cover_url,
+                        'color_theme_decimal': self.color_theme_decimal
                     }
                 else: 
                     self.log('ignoring title due to filter {} - {}'.format(title_type_micro_edition, full_title_micro_edition))
@@ -182,7 +173,8 @@ class AmazonSpider(scrapy.Spider):
                         'title_type': title_type_mini_edition, 
                         'url': url_mini_edition, 
                         'price': price_mini_edition, 
-                        'cover_url': cover_url
+                        'cover_url': cover_url,
+                        'color_theme_decimal': self.color_theme_decimal
                     }
                 else: 
                     self.log('ignoring title due to filter {} - {}'.format(title_type_mini_edition, full_title_mini_edition))

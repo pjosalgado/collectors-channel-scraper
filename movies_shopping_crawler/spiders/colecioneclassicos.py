@@ -6,28 +6,23 @@ import pytz
 class ColecioneClassicosSpider(scrapy.Spider):
 
     name = 'colecioneclassicos'
+    color_theme_decimal = '13608282'
 
     start_urls = [
         # Box e Coleções
         'https://www.colecioneclassicos.com.br/box-e-colecoes',
 
-        # Combos
-        'https://www.colecioneclassicos.com.br/combos--',
+        # Destaques Imperdíveis
+        'https://www.colecioneclassicos.com.br/de-volta-a-loja',
 
-        # Blu-rays
-        'https://www.colecioneclassicos.com.br/blu-rays',
+        # Obras-Primas do Cinema
+        'https://www.colecioneclassicos.com.br/OP',
 
-        # Pré - Venda
+        # Pré-Venda
         'https://www.colecioneclassicos.com.br/pre-venda',
 
         # Lançamentos
         'https://www.colecioneclassicos.com.br/lancamentos',
-
-        # Exclusivos
-        'https://www.colecioneclassicos.com.br/exclusivos',
-
-        # Cinema de todas as épocas
-        'https://www.colecioneclassicos.com.br/cinema-de-todas-as-epocas',
 
         # Busca "4K"
         'https://www.colecioneclassicos.com.br/buscar?q=4K',
@@ -86,7 +81,8 @@ class ColecioneClassicosSpider(scrapy.Spider):
                 'title_type': title_type, 
                 'url': url, 
                 'price': price, 
-                'cover_url': cover_url
+                'cover_url': cover_url,
+                'color_theme_decimal': self.color_theme_decimal
             }
 
         if self.pagination_enabled: 

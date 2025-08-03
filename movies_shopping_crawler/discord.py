@@ -24,39 +24,54 @@ class DiscordPipeline(object):
 
         log.info('Processing in DiscordPipeline item <{}>'.format(item))
 
-        price = item['price']
-
         if 'old_item' in item: 
-            notification = get_notification_status(self, item['old_item'], item)
+            notification_type = get_notification_status(self, item['old_item'], item)
         else: 
-            notification = '🆕'
+            notification_type = ':new: Novo no catálogo'
     
-        if notification is None or price == 'Indisponível': 
+        price = item['price'].replace('.', ',')
+
+        if notification_type is None or price == 'Indisponível': 
            raise DropItem('Status not relevant in item <{}>'.format(item))
 
-        title = item['title']
-        title_type = item['title_type']
-        spider_pretty_name = item['spider_pretty_name']
-        url = item['url']
-        cover_url = item['cover_url']
-        price = price.replace('.', ',')
-
-        message = '**{}**'.format(title)
-        message += '\n:dvd: {}'.format(title_type) if title_type != None else ''
-        message += '\n:dollar: R$ {} - {}'.format(price, spider_pretty_name)
-        message += '\n{}'.format(notification)
-        message += '\n:link: {}'.format(url)
-
         if 'additional_info' in item:
-            additional_info = item['additional_info']
-            message += '\n:warning: {}'.format(additional_info)
+            additional_info = '⚠️ {}'.format(item['additional_info'])
+        else:
+            additional_info = ''
 
         json = {
-            'content': message,
             'embeds': [{
-                'image': {
-                    'url': cover_url
-                }
+                'title': item['title'],
+                'url': item['url'],
+                'color': item['color_theme_decimal'],
+                'thumbnail': {
+                    'url': item['cover_url']
+                },
+                'fields': [
+                    {
+                        'name': 'Status',
+                        'value': notification_type,
+                        'inline': False
+                    },
+                    {
+                        'name': 'Tipo',
+                        'value': item['title_type'],
+                        'inline': False
+                    },
+                    {
+                        'name': 'Preço',
+                        'value': 'R$ {}'.format(price),
+                        'inline': True
+                    },
+                    {
+                        'name': 'Loja',
+                        'value': item['spider_pretty_name'],
+                        'inline': True
+                    }
+                ],
+                'footer': {
+                    'text': additional_info
+                },
             }]
         }
 
@@ -84,9 +99,9 @@ def get_notification_status(self, old, new):
 
             if percentage_difference >= self.discount_percentage: 
                 old_price_value = old_price_value.replace('.', ',')
-                return ':arrow_down: {}% - antes era R$ {}'.format(percentage_difference, old_price_value)
+                return ':arrow_down: {}% - antes custava R$ {}'.format(percentage_difference, old_price_value)
     except: 
         if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
-            return ':arrows_counterclockwise: antes estava indisponível'
+            return ':arrows_counterclockwise: Antes estava indisponível'
 
     return None

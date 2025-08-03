@@ -3,25 +3,29 @@ import scrapy
 from datetime import datetime
 import pytz
 
-class ImusicBrSpider(scrapy.Spider): 
+class ImusicBrSpider(scrapy.Spider):
 
     name = 'imusicbr'
+    color_theme_decimal = '11273221'
 
     start_urls = [
-        # Filmes da Criterion Collection
+        # 4K UHD & Blu-ray Steelbooks
+        'https://imusic.br.com/exposure/18451/4k-uhd-blu-ray-steelbooks',
+
+        # Filmes da coleção Criterion
         'https://imusic.br.com/exposure/18490/filmes-da-colecao-criterion',
 
-        # 4K UHD Movies
+        # Filme 4K UHD
         'https://imusic.br.com/exposure/13562/4k-uhd-movies',
 
         # Filmes e séries novos e futuros
         'https://imusic.br.com/exposure/29/filmes-e-series-novos-e-futuros',
 
-        # DVDs e Blu-rays em estoque
-        'https://imusic.br.com/exposure/1717/dvd-s-and-blu-rays-in-stock',
-
         # DVD e Blu-ray - Mais Vendido
         'https://imusic.br.com/exposure/11084/dvd-e-blu-ray-mais-vendido',
+
+        # Crunchyroll
+        'https://imusic.br.com/exposure/22810/crunchyroll',
     ]
 
     ignored_categories = [
@@ -85,6 +89,7 @@ class ImusicBrSpider(scrapy.Spider):
                     'price': price, 
                     'cover_url': cover_url,
                     'additional_info': '+ ~95% de impostos',
+                    'color_theme_decimal': self.color_theme_decimal
                 }
 
         if self.pagination_enabled:

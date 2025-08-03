@@ -3,19 +3,20 @@ import scrapy
 from datetime import datetime
 import pytz
 
-class FamDvdSpider(scrapy.Spider): 
+class FamDvdSpider(scrapy.Spider):
 
     name = 'famdvd'
+    color_theme_decimal = '197895'
 
     start_urls = [
         # Exclusivos
-        'https://www.famdvd.com.br/exclusivos-1.html', 
+        'https://www.famdvd.com.br/exclusivos-1.html',
 
         # Lançamentos
-        'https://www.famdvd.com.br/lancamento.html', 
+        'https://www.famdvd.com.br/lancamento.html',
 
         # Pré-venda
-        'https://www.famdvd.com.br/pre-venda.html', 
+        'https://www.famdvd.com.br/pre-venda.html',
 
         # Busca "4K"
         'https://www.famdvd.com.br/catalogsearch/result/?q=4K',
@@ -74,7 +75,8 @@ class FamDvdSpider(scrapy.Spider):
                 'title_type': title_type, 
                 'url': url, 
                 'price': price, 
-                'cover_url': cover_url
+                'cover_url': cover_url,
+                'color_theme_decimal': self.color_theme_decimal
             }
 
         if self.pagination_enabled: 

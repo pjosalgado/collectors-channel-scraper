@@ -6,6 +6,7 @@ import pytz
 class TheOriginalsSpider(scrapy.Spider):
 
     name = 'theoriginals'
+    color_theme_decimal = '2037100'
 
     start_urls = [
         # PRÉ-VENDA
@@ -14,8 +15,11 @@ class TheOriginalsSpider(scrapy.Spider):
         # LANÇAMENTOS
         'https://www.theoriginals.com.br/filmes-lancamentos',
 
-        # PROMOÇÕES
-        'https://www.theoriginals.com.br/filmes-promocoes',
+        # 4K UHD
+        'https://www.theoriginals.com.br/4k-uhd',
+
+        # COLEÇÃO
+        'https://www.theoriginals.com.br/filmes-colecao',
 
         # EDIÇÕES IMPORTADAS
         'https://www.theoriginals.com.br/edicoes-importadas',
@@ -23,17 +27,11 @@ class TheOriginalsSpider(scrapy.Spider):
         # EXCLUSIVOS ED ESPECIAIS
         'https://www.theoriginals.com.br/exclusivos',
 
-        # 4K UHD
-        'https://www.theoriginals.com.br/4k-uhd',
-
-        # BLU-RAY 3D
-        'https://www.theoriginals.com.br/filmes-blu-ray-3d',
-
-        # COLEÇÃO
-        'https://www.theoriginals.com.br/filmes-colecao',
-
         # STEELBOOK
         'https://www.theoriginals.com.br/steelbook',
+
+        # PROMOÇÕES
+        'https://www.theoriginals.com.br/filmes-promocoes',
     ]
 
 
@@ -89,7 +87,8 @@ class TheOriginalsSpider(scrapy.Spider):
                 'title_type': title_type, 
                 'url': url, 
                 'price': price, 
-                'cover_url': cover_url
+                'cover_url': cover_url,
+                'color_theme_decimal': self.color_theme_decimal
             }
 
         if self.pagination_enabled: 
