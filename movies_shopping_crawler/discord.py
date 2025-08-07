@@ -34,10 +34,10 @@ class DiscordPipeline(object):
         if notification_type is None or price == 'Indisponível': 
            raise DropItem('Status not relevant in item <{}>'.format(item))
 
+        footer_message = item['spider_url_pretty_name']
+
         if 'additional_info' in item:
-            additional_info = '⚠️ {}'.format(item['additional_info'])
-        else:
-            additional_info = ''
+            footer_message += '\n⚠️ {}'.format(item['additional_info'])
 
         json = {
             'embeds': [{
@@ -70,7 +70,7 @@ class DiscordPipeline(object):
                     }
                 ],
                 'footer': {
-                    'text': additional_info
+                    'text': footer_message
                 },
             }]
         }
@@ -99,9 +99,9 @@ def get_notification_status(self, old, new):
 
             if percentage_difference >= self.discount_percentage: 
                 old_price_value = old_price_value.replace('.', ',')
-                return ':arrow_down: {}% - antes custava R$ {}'.format(percentage_difference, old_price_value)
+                return ':arrow_down: {}%\nCustava R$ {}'.format(percentage_difference, old_price_value)
     except: 
         if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
-            return ':arrows_counterclockwise: Antes estava indisponível'
+            return ':arrows_counterclockwise: Estava indisponível'
 
     return None

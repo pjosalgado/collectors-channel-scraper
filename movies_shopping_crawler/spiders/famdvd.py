@@ -5,21 +5,27 @@ import pytz
 
 class FamDvdSpider(scrapy.Spider):
 
-    name = 'famdvd'
+    name                = 'famdvd'
+    spider_pretty_name  = 'Fam DVD'
     color_theme_decimal = '197895'
 
-    start_urls = [
-        # Exclusivos
-        'https://www.famdvd.com.br/exclusivos-1.html',
+    urls = {
+        'Exclusivos'
+            : 'https://www.famdvd.com.br/exclusivos-1.html',
 
-        # Lançamentos
-        'https://www.famdvd.com.br/lancamento.html',
+        'Lançamentos'
+            : 'https://www.famdvd.com.br/lancamento.html',
 
-        # Pré-venda
-        'https://www.famdvd.com.br/pre-venda.html',
+        'Pré-venda'
+            : 'https://www.famdvd.com.br/pre-venda.html',
 
-        # Busca "4K"
-        'https://www.famdvd.com.br/catalogsearch/result/?q=4K',
+        'Busca "4K"'
+            : 'https://www.famdvd.com.br/catalogsearch/result/?q=4K',
+    }
+
+    start_urls = list(urls.values())
+
+    ignored_categories = [
     ]
 
 
@@ -64,20 +70,27 @@ class FamDvdSpider(scrapy.Spider):
                 price = '%.2f' % float(price)
 
             cover_url = movie_selector.css('img::attr(src)').get().strip()
-            
-            yield {
-                'spider': self.name, 
-                'spider_pretty_name': 'Fam DVD', 
-                'spider_url': response.url, 
-                'timestamp': timestamp, 
-                'full_title': full_title, 
-                'title': title, 
-                'title_type': title_type, 
-                'url': url, 
-                'price': price, 
-                'cover_url': cover_url,
-                'color_theme_decimal': self.color_theme_decimal
-            }
+
+            spider_url_pretty_name = next(
+                (name for name, url in self.urls.items() if response.url.startswith(url)),
+                response.url  # To do: remove later when it's stable
+            )
+
+            if title_type not in self.ignored_categories:
+                yield {
+                    'spider': self.name,
+                    'spider_pretty_name': self.spider_pretty_name,
+                    'spider_url': response.url,
+                    'spider_url_pretty_name': spider_url_pretty_name,
+                    'timestamp': timestamp,
+                    'full_title': full_title,
+                    'title': title,
+                    'title_type': title_type,
+                    'url': url,
+                    'price': price,
+                    'cover_url': cover_url,
+                    'color_theme_decimal': self.color_theme_decimal
+                }
 
         if self.pagination_enabled: 
             next_page = response.css('.i-next::attr(href)').get()

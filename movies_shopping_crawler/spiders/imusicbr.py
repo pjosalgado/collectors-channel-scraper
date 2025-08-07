@@ -5,28 +5,31 @@ import pytz
 
 class ImusicBrSpider(scrapy.Spider):
 
-    name = 'imusicbr'
+    name                = 'imusicbr'
+    spider_pretty_name  = 'iMusic BR'
     color_theme_decimal = '11273221'
 
-    start_urls = [
-        # 4K UHD & Blu-ray Steelbooks
-        'https://imusic.br.com/exposure/18451/4k-uhd-blu-ray-steelbooks',
+    urls = {
+        '4K UHD & Blu-ray Steelbooks'
+            : 'https://imusic.br.com/exposure/18451/4k-uhd-blu-ray-steelbooks',
 
-        # Filmes da coleção Criterion
-        'https://imusic.br.com/exposure/18490/filmes-da-colecao-criterion',
+        'Filmes da coleção Criterion'
+            : 'https://imusic.br.com/exposure/18490/filmes-da-colecao-criterion',
 
-        # Filme 4K UHD
-        'https://imusic.br.com/exposure/13562/4k-uhd-movies',
+        'Filme 4K UHD'
+            : 'https://imusic.br.com/exposure/13562/filme-4k-uhd',
 
-        # Filmes e séries novos e futuros
-        'https://imusic.br.com/exposure/29/filmes-e-series-novos-e-futuros',
+        'Filmes e séries novos e futuros'
+            : 'https://imusic.br.com/exposure/29/filmes-e-series-novos-e-futuros',
 
-        # DVD e Blu-ray - Mais Vendido
-        'https://imusic.br.com/exposure/11084/dvd-e-blu-ray-mais-vendido',
+        'DVD e Blu-ray - Mais Vendido'
+            : 'https://imusic.br.com/exposure/11084/dvd-e-blu-ray-mais-vendido',
 
-        # Crunchyroll
-        'https://imusic.br.com/exposure/22810/crunchyroll',
-    ]
+        'Crunchyroll'
+            : 'https://imusic.br.com/exposure/22810/crunchyroll',
+    }
+
+    start_urls = list(urls.values())
 
     ignored_categories = [
         'Paperback Book',
@@ -76,17 +79,23 @@ class ImusicBrSpider(scrapy.Spider):
 
             cover_url = movie_selector.css('.item-cover::attr(src)').get().strip()
 
-            if title_type not in self.ignored_categories: 
+            spider_url_pretty_name = next(
+                (name for name, url in self.urls.items() if response.url.startswith(url)),
+                response.url  # To do: remove later when it's stable
+            )
+
+            if title_type not in self.ignored_categories:
                 yield {
-                    'spider': self.name, 
-                    'spider_pretty_name': 'iMusic BR', 
-                    'spider_url': response.url, 
-                    'timestamp': timestamp, 
-                    'full_title': full_title, 
-                    'title': title, 
-                    'title_type': title_type, 
-                    'url': url, 
-                    'price': price, 
+                    'spider': self.name,
+                    'spider_pretty_name': self.spider_pretty_name,
+                    'spider_url': response.url,
+                    'spider_url_pretty_name': spider_url_pretty_name,
+                    'timestamp': timestamp,
+                    'full_title': full_title,
+                    'title': title,
+                    'title_type': title_type,
+                    'url': url,
+                    'price': price,
                     'cover_url': cover_url,
                     'additional_info': '+ ~95% de impostos',
                     'color_theme_decimal': self.color_theme_decimal

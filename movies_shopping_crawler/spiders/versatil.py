@@ -5,24 +5,30 @@ import pytz
 
 class VersatilSpider(scrapy.Spider):
 
-    name = 'versatil'
+    name                = 'versatil'
+    spider_pretty_name  = 'Versátil Home Vídeo'
     color_theme_decimal = '15571223'
 
-    start_urls = [
-        # Promoção
-        'https://www.versatilhv.com.br/categoria/promocao',
+    urls = {
+        'Promoção'
+            : 'https://www.versatilhv.com.br/categoria/promocao',
 
-        # Raridades
-        'https://www.versatilhv.com.br/categoria/raridades',
+        'Raridades'
+            : 'https://www.versatilhv.com.br/categoria/raridades',
 
-        # Pré-venda
-        'https://www.versatilhv.com.br/categoria/pre-venda',
+        'Pré-venda'
+            : 'https://www.versatilhv.com.br/categoria/pre-venda',
 
-        # Lançamentos
-        'https://www.versatilhv.com.br/categoria/lancamentos',
+        'Lançamentos'
+            : 'https://www.versatilhv.com.br/categoria/lancamentos',
 
-        # Edições Especiais
-        'https://www.versatilhv.com.br/categoria/edicoes-especiais',
+        'Edições Especiais'
+            : 'https://www.versatilhv.com.br/categoria/edicoes-especiais',
+    }
+
+    start_urls = list(urls.values())
+
+    ignored_categories = [
     ]
 
 
@@ -52,19 +58,26 @@ class VersatilSpider(scrapy.Spider):
             cover_url = movie_selector.css('.image > img::attr(data-src)').get().strip()
             cover_url = 'http:' + cover_url
 
-            yield {
-                'spider': self.name, 
-                'spider_pretty_name': 'Versátil Home Vídeo', 
-                'spider_url': response.url, 
-                'timestamp': timestamp, 
-                'full_title': full_title, 
-                'title': title, 
-                'title_type': title_type, 
-                'url': url, 
-                'price': price, 
-                'cover_url': cover_url,
-                'color_theme_decimal': self.color_theme_decimal
-            }
+            spider_url_pretty_name = next(
+                (name for name, url in self.urls.items() if response.url.startswith(url)),
+                response.url  # To do: remove later when it's stable
+            )
+
+            if title_type not in self.ignored_categories:
+                yield {
+                    'spider': self.name,
+                    'spider_pretty_name': self.spider_pretty_name,
+                    'spider_url': response.url,
+                    'spider_url_pretty_name': spider_url_pretty_name,
+                    'timestamp': timestamp,
+                    'full_title': full_title,
+                    'title': title,
+                    'title_type': title_type,
+                    'url': url,
+                    'price': price,
+                    'cover_url': cover_url,
+                    'color_theme_decimal': self.color_theme_decimal
+                }
 
 
 def get_title_details(full_title, default_type = 'DVD'): 

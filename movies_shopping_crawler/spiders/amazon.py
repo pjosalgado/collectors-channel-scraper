@@ -5,46 +5,49 @@ import pytz
 
 class AmazonSpider(scrapy.Spider):
 
-    name = 'amazon'
+    name                = 'amazon'
+    spider_pretty_name  = 'Amazon'
     color_theme_decimal = '16736768'
 
-    start_urls = [
-        # Blu-ray - Popularidade
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AacIgbzmOjSmDNVsO5jUcv3O6m%2BltVqwiWDouNHSFPAI',
+    urls = {
+        'Blu-ray - Popularidade'
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AacIgbzmOjSmDNVsO5jUcv3O6m%2BltVqwiWDouNHSFPAI',
 
-        # Blu-ray - Avaliação dos clientes (média)
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AVo%2BB8f211fCNbbqcXbHRCaQ1PngevKwUmtSs%2BO3Kmmc',
+        'Blu-ray - Avaliação dos clientes (média)'
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AVo%2BB8f211fCNbbqcXbHRCaQ1PngevKwUmtSs%2BO3Kmmc',
 
-        # Blu-ray - Data de lançamento
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=date-desc-rank&dc&rnid=19392499011&ref=sr_st_date-desc-rank&ds=v1%3AgoepJFYF%2BY9brRUB9JMVMHEYacuIvZ5HbSVN1w%2BChjI',
+        'Blu-ray - Data de lançamento'
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=date-desc-rank&dc&rnid=19392499011&ref=sr_st_date-desc-rank&ds=v1%3AgoepJFYF%2BY9brRUB9JMVMHEYacuIvZ5HbSVN1w%2BChjI',
 
-        # DVD - Popularidade
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AiGwzt4iz80dTecPkbgNkJPd4HD7tn1nw8nb07%2Bu7Cj8',
+        'DVD - Popularidade'
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AiGwzt4iz80dTecPkbgNkJPd4HD7tn1nw8nb07%2Bu7Cj8',
 
-        # DVD - Avaliação dos clientes (média)
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AONLj%2Bmx%2ByW38VYFsMwFpvruY0n1EKoWTuUfkxonslAI',
+        'DVD - Avaliação dos clientes (média)'
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AONLj%2Bmx%2ByW38VYFsMwFpvruY0n1EKoWTuUfkxonslAI',
 
-        # DVD - Data de lançamento
-        'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=date-desc-rank&dc&rnid=19392499011&ref=sr_st_date-desc-rank&ds=v1%3AaVBJzfs9wGav2eXqoPRXgzEjh2zPHGLnZGIk9kLbXtI',
+        'DVD - Data de lançamento'
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=date-desc-rank&dc&rnid=19392499011&ref=sr_st_date-desc-rank&ds=v1%3AaVBJzfs9wGav2eXqoPRXgzEjh2zPHGLnZGIk9kLbXtI',
 
-        # Busca "SteelBook" - Destaques
-        'https://www.amazon.com.br/s?k=Steelbook&i=dvd&ref=nb_sb_ss_ts-doa-p_2_4',
+        'Busca "SteelBook" - Destaques'
+            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&ref=nb_sb_ss_ts-doa-p_2_4',
 
-        # Busca "SteelBook" - Avaliação dos clientes (média)
-        'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=review-rank&ref=sr_st_review-rank&ds=v1%3AZCBb3OekUtQ6cRr2CzeHUlYZK2dfieBfO9vIJtELLew',
+        'Busca "SteelBook" - Avaliação dos clientes (média)'
+            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=review-rank&ref=sr_st_review-rank&ds=v1%3AZCBb3OekUtQ6cRr2CzeHUlYZK2dfieBfO9vIJtELLew',
 
-        # Busca "SteelBook" - Data de lançamento
-        'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=date-desc-rank&ref=sr_st_date-desc-rank&ds=v1%3AQZoIeIQms2le9YUVuUJuq6n9AgqnVQC5qPHJ%2F80wFbk',
+        'Busca "SteelBook" - Data de lançamento'
+            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=date-desc-rank&ref=sr_st_date-desc-rank&ds=v1%3AQZoIeIQms2le9YUVuUJuq6n9AgqnVQC5qPHJ%2F80wFbk',
 
-        # Busca "4K" - Destaques
-        'https://www.amazon.com.br/s?k=4K&i=dvd&s=relevancerank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_relevancerank&ds=v1%3ATYqaoTfv1pNBrMcY8%2BmfDipx0297McbkQLaHkOTqO5I',
+        'Busca "4K" - Destaques'
+            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=relevancerank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_relevancerank&ds=v1%3ATYqaoTfv1pNBrMcY8%2BmfDipx0297McbkQLaHkOTqO5I',
 
-        # Busca "4K" - Avaliação dos clientes (média)
-        'https://www.amazon.com.br/s?k=4K&i=dvd&s=review-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_review-rank&ds=v1%3AXMWJ8JjsGkGzdGuovrAtl0iIvNBWzD8iGqKojdwUQgg',
+        'Busca "4K" - Avaliação dos clientes (média)'
+            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=review-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_review-rank&ds=v1%3AXMWJ8JjsGkGzdGuovrAtl0iIvNBWzD8iGqKojdwUQgg',
 
-        # Busca "4K" - Data de lançamento
-        'https://www.amazon.com.br/s?k=4K&i=dvd&s=date-desc-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_date-desc-rank&ds=v1%3A3rfglGb3u%2FGs1nKm6z4znU8lHazi%2Bj9oZOp5bMAHfdc',
-    ]
+        'Busca "4K" - Data de lançamento'
+            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=date-desc-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_date-desc-rank&ds=v1%3A3rfglGb3u%2FGs1nKm6z4znU8lHazi%2Bj9oZOp5bMAHfdc',
+    }
+
+    start_urls = list(urls.values())
 
     ignored_categories = [
         'Acessório de telefone sem fio',
@@ -119,18 +122,24 @@ class AmazonSpider(scrapy.Spider):
             full_title_small_edition, title_type_small_edition, url_small_edition, price_small_edition = \
                 get_edition_details('.a-section.a-spacing-none.a-spacing-top-small', movie_selector, response, title)
 
+            spider_url_pretty_name = next(
+                (name for name, url in self.urls.items() if response.url.startswith(url)),
+                response.url  # To do: remove later when it's stable
+            )
+
             if full_title_small_edition is not None: 
                 if title_type_small_edition not in self.ignored_categories: 
                     yield {
-                        'spider': self.name, 
-                        'spider_pretty_name': 'Amazon', 
-                        'spider_url': response.url, 
-                        'timestamp': timestamp, 
-                        'full_title': full_title_small_edition, 
-                        'title': title, 
-                        'title_type': title_type_small_edition, 
-                        'url': url_small_edition, 
-                        'price': price_small_edition, 
+                        'spider': self.name,
+                        'spider_pretty_name': self.spider_pretty_name,
+                        'spider_url': response.url,
+                        'spider_url_pretty_name': spider_url_pretty_name,
+                        'timestamp': timestamp,
+                        'full_title': full_title_small_edition,
+                        'title': title,
+                        'title_type': title_type_small_edition,
+                        'url': url_small_edition,
+                        'price': price_small_edition,
                         'cover_url': cover_url,
                         'color_theme_decimal': self.color_theme_decimal
                     }
@@ -143,15 +152,16 @@ class AmazonSpider(scrapy.Spider):
             if full_title_micro_edition is not None: 
                 if title_type_micro_edition not in self.ignored_categories: 
                     yield {
-                        'spider': self.name, 
-                        'spider_pretty_name': 'Amazon', 
-                        'spider_url': response.url, 
-                        'timestamp': timestamp, 
-                        'full_title': full_title_micro_edition, 
-                        'title': title, 
-                        'title_type': title_type_micro_edition, 
-                        'url': url_micro_edition, 
-                        'price': price_micro_edition, 
+                        'spider': self.name,
+                        'spider_pretty_name': self.spider_pretty_name,
+                        'spider_url': response.url,
+                        'spider_url_pretty_name': spider_url_pretty_name,
+                        'timestamp': timestamp,
+                        'full_title': full_title_micro_edition,
+                        'title': title,
+                        'title_type': title_type_micro_edition,
+                        'url': url_micro_edition,
+                        'price': price_micro_edition,
                         'cover_url': cover_url,
                         'color_theme_decimal': self.color_theme_decimal
                     }
@@ -164,15 +174,16 @@ class AmazonSpider(scrapy.Spider):
             if full_title_mini_edition is not None: 
                 if title_type_mini_edition not in self.ignored_categories: 
                     yield {
-                        'spider': self.name, 
-                        'spider_pretty_name': 'Amazon', 
-                        'spider_url': response.url, 
-                        'timestamp': timestamp, 
-                        'full_title': full_title_mini_edition, 
-                        'title': title, 
-                        'title_type': title_type_mini_edition, 
-                        'url': url_mini_edition, 
-                        'price': price_mini_edition, 
+                        'spider': self.name,
+                        'spider_pretty_name': self.spider_pretty_name,
+                        'spider_url': response.url,
+                        'spider_url_pretty_name': spider_url_pretty_name,
+                        'timestamp': timestamp,
+                        'full_title': full_title_mini_edition,
+                        'title': title,
+                        'title_type': title_type_mini_edition,
+                        'url': url_mini_edition,
+                        'price': price_mini_edition,
                         'cover_url': cover_url,
                         'color_theme_decimal': self.color_theme_decimal
                     }

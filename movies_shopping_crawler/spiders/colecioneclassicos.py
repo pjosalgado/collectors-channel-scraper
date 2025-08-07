@@ -5,27 +5,33 @@ import pytz
 
 class ColecioneClassicosSpider(scrapy.Spider):
 
-    name = 'colecioneclassicos'
+    name                = 'colecioneclassicos'
+    spider_pretty_name  = 'Colecione Clássicos'
     color_theme_decimal = '13608282'
 
-    start_urls = [
-        # Box e Coleções
-        'https://www.colecioneclassicos.com.br/box-e-colecoes',
+    urls = {
+        'Box e Coleções'
+            : 'https://www.colecioneclassicos.com.br/box-e-colecoes',
 
-        # Destaques Imperdíveis
-        'https://www.colecioneclassicos.com.br/de-volta-a-loja',
+        'Destaques Imperdíveis'
+            : 'https://www.colecioneclassicos.com.br/de-volta-a-loja',
 
-        # Obras-Primas do Cinema
-        'https://www.colecioneclassicos.com.br/OP',
+        'Obras-Primas do Cinema'
+            : 'https://www.colecioneclassicos.com.br/OP',
 
-        # Pré-Venda
-        'https://www.colecioneclassicos.com.br/pre-venda',
+        'Pré-Venda'
+            : 'https://www.colecioneclassicos.com.br/pre-venda',
 
-        # Lançamentos
-        'https://www.colecioneclassicos.com.br/lancamentos',
+        'Lançamentos'
+            : 'https://www.colecioneclassicos.com.br/lancamentos',
 
-        # Busca "4K"
-        'https://www.colecioneclassicos.com.br/buscar?q=4K',
+        'Busca "4K"'
+            : 'https://www.colecioneclassicos.com.br/buscar?q=4K',
+    }
+
+    start_urls = list(urls.values())
+
+    ignored_categories = [
     ]
 
 
@@ -71,19 +77,26 @@ class ColecioneClassicosSpider(scrapy.Spider):
 
             cover_url = movie_selector.css('img::attr(src)').get().strip()
 
-            yield {
-                'spider': self.name, 
-                'spider_pretty_name': 'Colecione Clássicos', 
-                'spider_url': response.url, 
-                'timestamp': timestamp, 
-                'full_title': full_title, 
-                'title': title, 
-                'title_type': title_type, 
-                'url': url, 
-                'price': price, 
-                'cover_url': cover_url,
-                'color_theme_decimal': self.color_theme_decimal
-            }
+            spider_url_pretty_name = next(
+                (name for name, url in self.urls.items() if response.url.startswith(url)),
+                response.url  # To do: remove later when it's stable
+            )
+
+            if title_type not in self.ignored_categories:
+                yield {
+                    'spider': self.name,
+                    'spider_pretty_name': self.spider_pretty_name,
+                    'spider_url': response.url,
+                    'spider_url_pretty_name': spider_url_pretty_name,
+                    'timestamp': timestamp,
+                    'full_title': full_title,
+                    'title': title,
+                    'title_type': title_type,
+                    'url': url,
+                    'price': price,
+                    'cover_url': cover_url,
+                    'color_theme_decimal': self.color_theme_decimal
+                }
 
         if self.pagination_enabled: 
             next_page = response.css('a[rel=next]::attr(href)').get()

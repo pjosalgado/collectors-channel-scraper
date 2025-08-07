@@ -5,33 +5,39 @@ import pytz
 
 class TheOriginalsSpider(scrapy.Spider):
 
-    name = 'theoriginals'
+    name                = 'theoriginals'
+    spider_pretty_name  = 'The Originals'
     color_theme_decimal = '2037100'
 
-    start_urls = [
-        # PRÉ-VENDA
-        'https://www.theoriginals.com.br/filmes-pre-venda',
+    urls = {
+        'PRÉ-VENDA'
+            : 'https://www.theoriginals.com.br/filmes-pre-venda',
 
-        # LANÇAMENTOS
-        'https://www.theoriginals.com.br/filmes-lancamentos',
+        'LANÇAMENTOS'
+            : 'https://www.theoriginals.com.br/filmes-lancamentos',
 
-        # 4K UHD
-        'https://www.theoriginals.com.br/4k-uhd',
+        '4K UHD'
+            : 'https://www.theoriginals.com.br/4k-uhd',
 
-        # COLEÇÃO
-        'https://www.theoriginals.com.br/filmes-colecao',
+        'COLEÇÃO'
+            : 'https://www.theoriginals.com.br/filmes-colecao',
 
-        # EDIÇÕES IMPORTADAS
-        'https://www.theoriginals.com.br/edicoes-importadas',
+        'EDIÇÕES IMPORTADAS'
+            : 'https://www.theoriginals.com.br/edicoes-importadas',
 
-        # EXCLUSIVOS ED ESPECIAIS
-        'https://www.theoriginals.com.br/exclusivos',
+        'EXCLUSIVOS ED ESPECIAIS'
+            : 'https://www.theoriginals.com.br/exclusivos',
 
-        # STEELBOOK
-        'https://www.theoriginals.com.br/steelbook',
+        'STEELBOOK'
+            : 'https://www.theoriginals.com.br/steelbook',
 
-        # PROMOÇÕES
-        'https://www.theoriginals.com.br/filmes-promocoes',
+        'PROMOÇÕES'
+            : 'https://www.theoriginals.com.br/filmes-promocoes',
+    }
+
+    start_urls = list(urls.values())
+
+    ignored_categories = [
     ]
 
 
@@ -77,19 +83,26 @@ class TheOriginalsSpider(scrapy.Spider):
 
             cover_url = movie_selector.css('img::attr(src)').get().strip()
 
-            yield {
-                'spider': self.name, 
-                'spider_pretty_name': 'The Originals', 
-                'spider_url': response.url, 
-                'timestamp': timestamp, 
-                'full_title': full_title, 
-                'title': title, 
-                'title_type': title_type, 
-                'url': url, 
-                'price': price, 
-                'cover_url': cover_url,
-                'color_theme_decimal': self.color_theme_decimal
-            }
+            spider_url_pretty_name = next(
+                (name for name, url in self.urls.items() if response.url.startswith(url)),
+                response.url  # To do: remove later when it's stable
+            )
+
+            if title_type not in self.ignored_categories:
+                yield {
+                    'spider': self.name,
+                    'spider_pretty_name': self.spider_pretty_name,
+                    'spider_url': response.url,
+                    'spider_url_pretty_name': spider_url_pretty_name,
+                    'timestamp': timestamp,
+                    'full_title': full_title,
+                    'title': title,
+                    'title_type': title_type,
+                    'url': url,
+                    'price': price,
+                    'cover_url': cover_url,
+                    'color_theme_decimal': self.color_theme_decimal
+                }
 
         if self.pagination_enabled: 
             next_page = response.css('a[rel=next]::attr(href)').get()
