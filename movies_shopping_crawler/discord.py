@@ -34,7 +34,7 @@ class DiscordPipeline(object):
         if notification_type is None or price == 'Indisponível': 
            raise DropItem('Status not relevant in item <{}>'.format(item))
 
-        footer_message = item['spider_url_pretty_name']
+        footer_message = '📄 {}'.format(item['spider_url_pretty_name'])
 
         if 'additional_info' in item:
             footer_message += '\n⚠️ {}'.format(item['additional_info'])
