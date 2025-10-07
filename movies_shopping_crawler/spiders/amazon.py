@@ -5,9 +5,8 @@ import pytz
 
 class AmazonSpider(scrapy.Spider):
 
-    name                = 'amazon'
-    spider_pretty_name  = 'Amazon'
-    color_theme_decimal = '16736768'
+    name               = 'amazon'
+    spider_pretty_name = 'Amazon'
 
     urls = {
         'Blu-ray - Popularidade'
@@ -140,8 +139,7 @@ class AmazonSpider(scrapy.Spider):
                         'title_type': title_type_small_edition,
                         'url': url_small_edition,
                         'price': price_small_edition,
-                        'cover_url': cover_url,
-                        'color_theme_decimal': self.color_theme_decimal
+                        'cover_url': cover_url
                     }
                 else: 
                     self.log('ignoring title due to filter {} - {}'.format(title_type_small_edition, full_title_small_edition))
@@ -162,8 +160,7 @@ class AmazonSpider(scrapy.Spider):
                         'title_type': title_type_micro_edition,
                         'url': url_micro_edition,
                         'price': price_micro_edition,
-                        'cover_url': cover_url,
-                        'color_theme_decimal': self.color_theme_decimal
+                        'cover_url': cover_url
                     }
                 else: 
                     self.log('ignoring title due to filter {} - {}'.format(title_type_micro_edition, full_title_micro_edition))
@@ -184,8 +181,7 @@ class AmazonSpider(scrapy.Spider):
                         'title_type': title_type_mini_edition,
                         'url': url_mini_edition,
                         'price': price_mini_edition,
-                        'cover_url': cover_url,
-                        'color_theme_decimal': self.color_theme_decimal
+                        'cover_url': cover_url
                     }
                 else: 
                     self.log('ignoring title due to filter {} - {}'.format(title_type_mini_edition, full_title_mini_edition))

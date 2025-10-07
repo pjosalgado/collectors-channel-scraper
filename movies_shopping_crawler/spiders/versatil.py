@@ -5,9 +5,8 @@ import pytz
 
 class VersatilSpider(scrapy.Spider):
 
-    name                = 'versatil'
-    spider_pretty_name  = 'Versátil Home Vídeo'
-    color_theme_decimal = '15571223'
+    name               = 'versatil'
+    spider_pretty_name = 'Versátil Home Vídeo'
 
     urls = {
         'Promoção'
@@ -75,8 +74,7 @@ class VersatilSpider(scrapy.Spider):
                     'title_type': title_type,
                     'url': url,
                     'price': price,
-                    'cover_url': cover_url,
-                    'color_theme_decimal': self.color_theme_decimal
+                    'cover_url': cover_url
                 }
 
 

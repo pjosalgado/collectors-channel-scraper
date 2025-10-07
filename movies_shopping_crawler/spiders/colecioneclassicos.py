@@ -5,9 +5,8 @@ import pytz
 
 class ColecioneClassicosSpider(scrapy.Spider):
 
-    name                = 'colecioneclassicos'
-    spider_pretty_name  = 'Colecione Clássicos'
-    color_theme_decimal = '13608282'
+    name               = 'colecioneclassicos'
+    spider_pretty_name = 'Colecione Clássicos'
 
     urls = {
         'Box e Coleções'
@@ -94,8 +93,7 @@ class ColecioneClassicosSpider(scrapy.Spider):
                     'title_type': title_type,
                     'url': url,
                     'price': price,
-                    'cover_url': cover_url,
-                    'color_theme_decimal': self.color_theme_decimal
+                    'cover_url': cover_url
                 }
 
         if self.pagination_enabled: 

@@ -5,9 +5,8 @@ import pytz
 
 class ImusicBrSpider(scrapy.Spider):
 
-    name                = 'imusicbr'
-    spider_pretty_name  = 'iMusic BR'
-    color_theme_decimal = '11273221'
+    name               = 'imusicbr'
+    spider_pretty_name = 'iMusic BR'
 
     urls = {
         '4K UHD & Blu-ray Steelbooks'
@@ -97,8 +96,7 @@ class ImusicBrSpider(scrapy.Spider):
                     'url': url,
                     'price': price,
                     'cover_url': cover_url,
-                    'additional_info': '+ ~95% de impostos',
-                    'color_theme_decimal': self.color_theme_decimal
+                    'additional_info': '+ ~95% de impostos'
                 }
 
         if self.pagination_enabled:

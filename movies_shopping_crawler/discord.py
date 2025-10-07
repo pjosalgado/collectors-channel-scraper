@@ -6,6 +6,10 @@ from scrapy.exceptions import DropItem
 
 class DiscordPipeline(object): 
 
+    green_color_decimal  = 65280
+    yellow_color_decimal = 16776960
+    white_color_decimal  = 16777215
+
     def __init__(self, url, discount_percentage, restock_notification): 
         self.url = url
         self.discount_percentage = discount_percentage
@@ -25,14 +29,16 @@ class DiscordPipeline(object):
         log.info('Processing in DiscordPipeline item <{}>'.format(item))
 
         if 'old_item' in item: 
-            notification_type = get_notification_status(self, item['old_item'], item)
+            color_decimal, notification_type = get_notification_status(self, item['old_item'], item)
         else: 
+            color_decimal = self.green_color_decimal
             notification_type = ':new: Novo no catálogo'
     
         price = item['price'].replace('.', ',')
 
-        if notification_type is None or price == 'Indisponível': 
-           raise DropItem('Status not relevant in item <{}>'.format(item))
+        if notification_type is None or price == 'Indisponível':
+            log.warning('Status not relevant in item <{}>'.format(item))
+            return item
 
         footer_message = '📄 {}'.format(item['spider_url_pretty_name'])
 
@@ -43,7 +49,7 @@ class DiscordPipeline(object):
             'embeds': [{
                 'title': item['title'],
                 'url': item['url'],
-                'color': item['color_theme_decimal'],
+                'color': color_decimal,
                 'thumbnail': {
                     'url': item['cover_url']
                 },
@@ -99,9 +105,9 @@ def get_notification_status(self, old, new):
 
             if percentage_difference >= self.discount_percentage: 
                 old_price_value = old_price_value.replace('.', ',')
-                return ':arrow_down: {}%\nCustava R$ {}'.format(percentage_difference, old_price_value)
+                return self.yellow_color_decimal, ':arrow_down: {}%\nCustava R$ {}'.format(percentage_difference, old_price_value)
     except: 
         if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
-            return ':arrows_counterclockwise: Estava indisponível'
+            return self.white_color_decimal, ':arrows_counterclockwise: Estava indisponível'
 
-    return None
+    return None, None

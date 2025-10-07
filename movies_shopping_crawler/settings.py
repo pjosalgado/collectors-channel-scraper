@@ -56,8 +56,9 @@ SPIDER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'movies_shopping_crawler.mongodb.MongoDbPipeline': 300,
-    'movies_shopping_crawler.influxdb.InfluxDbPipeline': 400,
-    'movies_shopping_crawler.discord.DiscordPipeline': 500
+    'movies_shopping_crawler.influxdb.InfluxDbPipeline': 310,
+    'movies_shopping_crawler.discord.DiscordPipeline': 400,
+    'movies_shopping_crawler.telegram.TelegramPipeline': 410
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

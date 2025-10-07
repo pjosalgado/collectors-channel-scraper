@@ -5,9 +5,8 @@ import pytz
 
 class TheOriginalsSpider(scrapy.Spider):
 
-    name                = 'theoriginals'
-    spider_pretty_name  = 'The Originals'
-    color_theme_decimal = '2037100'
+    name               = 'theoriginals'
+    spider_pretty_name = 'The Originals'
 
     urls = {
         'PRÉ-VENDA'
@@ -100,8 +99,7 @@ class TheOriginalsSpider(scrapy.Spider):
                     'title_type': title_type,
                     'url': url,
                     'price': price,
-                    'cover_url': cover_url,
-                    'color_theme_decimal': self.color_theme_decimal
+                    'cover_url': cover_url
                 }
 
         if self.pagination_enabled: 

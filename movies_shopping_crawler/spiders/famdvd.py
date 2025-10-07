@@ -5,9 +5,8 @@ import pytz
 
 class FamDvdSpider(scrapy.Spider):
 
-    name                = 'famdvd'
-    spider_pretty_name  = 'Fam DVD'
-    color_theme_decimal = '197895'
+    name               = 'famdvd'
+    spider_pretty_name = 'Fam DVD'
 
     urls = {
         'Exclusivos'
@@ -88,8 +87,7 @@ class FamDvdSpider(scrapy.Spider):
                     'title_type': title_type,
                     'url': url,
                     'price': price,
-                    'cover_url': cover_url,
-                    'color_theme_decimal': self.color_theme_decimal
+                    'cover_url': cover_url
                 }
 
         if self.pagination_enabled: 

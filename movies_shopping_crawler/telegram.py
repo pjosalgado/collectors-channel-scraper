@@ -6,9 +6,10 @@ from scrapy.exceptions import DropItem
 
 class TelegramPipeline(object): 
 
-    def __init__(self, token, chat_id, parse_mode, discount_percentage, restock_notification): 
+    def __init__(self, token, chat_id, thread_id, parse_mode, discount_percentage, restock_notification): 
         self.token = token
         self.chat_id = chat_id
+        self.thread_id = thread_id
         self.parse_mode = parse_mode
         self.discount_percentage = discount_percentage
         self.restock_notification = restock_notification
@@ -18,6 +19,7 @@ class TelegramPipeline(object):
         return cls(
             token = crawler.settings.get('TELEGRAM_TOKEN'), 
             chat_id = crawler.settings.get('TELEGRAM_CHAT_ID'), 
+            thread_id = crawler.settings.get('TELEGRAM_THREAD_ID'), 
             parse_mode = crawler.settings.get('TELEGRAM_PARSE_MODE'),
             discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE')),
             restock_notification = crawler.settings.get('NOTIFICATION_RESTOCK') == "True"
@@ -33,10 +35,11 @@ class TelegramPipeline(object):
         if 'old_item' in item: 
             notification = get_notification_status(self, item['old_item'], item)
         else: 
-            notification = '🆕'
+            notification = '🆕 Novo no catálogo'
     
         if notification is None or price == 'Indisponível': 
-            raise DropItem('Status not relevant in item <{}>'.format(item))
+            log.warning('Status not relevant in item <{}>'.format(item))
+            return item
 
         title = item['title']
         title_type = item['title_type']
@@ -50,10 +53,15 @@ class TelegramPipeline(object):
         message += '\n💵 {} - R$ {}'.format(spider_pretty_name, price)
         message += '\n{}'.format(notification)
         message += '\n🔗 {}'.format(url)
+        message += '\n\n📄 _{}_'.format(item['spider_url_pretty_name'])
+
+        if 'additional_info' in item: 
+            message += '\n⚠️ _{}_'.format(item['additional_info'])
 
         url = 'https://api.telegram.org/bot' + self.token + '/sendPhoto'
         data = {
             'chat_id': self.chat_id, 
+            'message_thread_id': self.thread_id, 
             'photo': cover_url, 
             'parse_mode': self.parse_mode, 
             'caption': message
@@ -78,9 +86,9 @@ def get_notification_status(self, old, new):
 
             if percentage_difference >= self.discount_percentage: 
                 old_price_value = old_price_value.replace('.', ',')
-                return '⬇️ {}% - antes era R$ {}'.format(percentage_difference, old_price_value)
+                return '⬇️ {}%\nCustava R$ {}'.format(percentage_difference, old_price_value)
     except: 
         if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
-            return '🔄 antes estava indisponível'
+            return '🔄 Estava indisponível'
 
     return None
