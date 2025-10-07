@@ -25,6 +25,7 @@ class FamDvdSpider(scrapy.Spider):
     start_urls = list(urls.values())
 
     ignored_categories = [
+        'Funko Pop!',
     ]
 
 
@@ -53,7 +54,7 @@ class FamDvdSpider(scrapy.Spider):
 
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('li.item'): 
+        for movie_selector in response.css('.products-grid > li.item'): 
             
             full_title = movie_selector.css('h3 > a::text').get().strip()
             title, title_type = get_title_details(full_title)
@@ -89,6 +90,8 @@ class FamDvdSpider(scrapy.Spider):
                     'price': price,
                     'cover_url': cover_url
                 }
+            else:
+                self.log('Ignoring title due to filter: {}'.format(full_title))
 
         if self.pagination_enabled: 
             next_page = response.css('.i-next::attr(href)').get()
@@ -104,5 +107,8 @@ def get_title_details(full_title, default_type = 'DVD'):
     if full_title.lower().startswith('blu-ray'): 
         title_split = full_title.split(' - ', 1)
         return (title_split[1].strip(), title_split[0].strip())
+    if full_title.lower().startswith('funko pop!'): 
+        title_split = full_title.split(' - ', 1)
+        return (title_split[1].strip(), 'Funko Pop!')
     else: 
         return (full_title, default_type)

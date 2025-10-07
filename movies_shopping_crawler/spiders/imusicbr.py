@@ -98,6 +98,8 @@ class ImusicBrSpider(scrapy.Spider):
                     'cover_url': cover_url,
                     'additional_info': '+ ~95% de impostos'
                 }
+            else:
+                self.log('Ignoring title due to filter: {}'.format(full_title))
 
         if self.pagination_enabled:
             next_page = response.css('.navbar-right > .btn-primary')

@@ -101,6 +101,8 @@ class TheOriginalsSpider(scrapy.Spider):
                     'price': price,
                     'cover_url': cover_url
                 }
+            else:
+                self.log('Ignoring title due to filter: {}'.format(full_title))
 
         if self.pagination_enabled: 
             next_page = response.css('a[rel=next]::attr(href)').get()

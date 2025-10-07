@@ -76,6 +76,8 @@ class VersatilSpider(scrapy.Spider):
                     'price': price,
                     'cover_url': cover_url
                 }
+            else:
+                self.log('Ignoring title due to filter: {}'.format(full_title))
 
 
 def get_title_details(full_title, default_type = 'DVD'): 
