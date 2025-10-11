@@ -86,7 +86,7 @@ def get_notification_status(self, old, new):
 
             if percentage_difference >= self.discount_percentage: 
                 old_price_value = old_price_value.replace('.', ',')
-                return '⬇️ {}%\nCustava R$ {}'.format(percentage_difference, old_price_value)
+                return '⬇️ {}% - Custava R$ {}'.format(percentage_difference, old_price_value)
     except: 
         if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
             return '🔄 Estava indisponível'
