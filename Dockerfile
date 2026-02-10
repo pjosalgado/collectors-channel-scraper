@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.14.3-slim
 
 LABEL maintainer="Paulo Salgado <pjosalgado@gmail.com>"
 LABEL version="2.11.0"
