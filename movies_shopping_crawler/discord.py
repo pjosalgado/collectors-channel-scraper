@@ -4,19 +4,19 @@ import logging as log
 import requests
 from scrapy.exceptions import DropItem
 
-class DiscordPipeline(object): 
+class DiscordPipeline(object):
 
     green_color_decimal  = 65280
     yellow_color_decimal = 16776960
     white_color_decimal  = 16777215
 
-    def __init__(self, url, discount_percentage, restock_notification): 
+    def __init__(self, url, discount_percentage, restock_notification):
         self.url = url
         self.discount_percentage = discount_percentage
         self.restock_notification = restock_notification
 
     @classmethod
-    def from_crawler(cls, crawler): 
+    def from_crawler(cls, crawler):
         return cls(
             url = crawler.settings.get('DISCORD_URL'),
             discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE')),
@@ -24,19 +24,19 @@ class DiscordPipeline(object):
         )
 
 
-    def process_item(self, item, spider): 
+    def process_item(self, item, spider):
 
         log.info('Processing in DiscordPipeline item <{}>'.format(item))
 
-        if 'old_item' in item: 
-            color_decimal, notification_type = get_notification_status(self, item['old_item'], item)
-        else: 
-            color_decimal = self.green_color_decimal
-            notification_type = ':new: Novo no catálogo'
-    
+        if 'previous_price' in item:
+            message_color, message_text = get_notification_status(self, item)
+        else:
+            message_color = self.green_color_decimal
+            message_text = ':new: Novo no catálogo'
+
         price = item['price'].replace('.', ',')
 
-        if notification_type is None or price == 'Indisponível':
+        if message_text is None or price == 'Indisponível':
             log.warning('Status not relevant in item <{}>'.format(item))
             return item
 
@@ -49,14 +49,14 @@ class DiscordPipeline(object):
             'embeds': [{
                 'title': item['title'],
                 'url': item['url'],
-                'color': color_decimal,
+                'color': message_color,
                 'thumbnail': {
                     'url': item['cover_url']
                 },
                 'fields': [
                     {
                         'name': 'Status',
-                        'value': notification_type,
+                        'value': message_text,
                         'inline': False
                     },
                     {
@@ -92,21 +92,21 @@ class DiscordPipeline(object):
         return item
 
 
-def get_notification_status(self, old, new): 
+def get_notification_status(self, item):
 
-    old_price_value = old['price']
-    new_price_value = new['price']
+    new_price_value = item['price']
+    old_price_value = item['previous_price']
 
     try: 
-        if float(new_price_value) < float(old_price_value): 
+        if float(new_price_value) < float(old_price_value):
             old_price = float(old_price_value)
             new_price = float(new_price_value)
             percentage_difference = round(((old_price - new_price) / old_price) * 100)
 
-            if percentage_difference >= self.discount_percentage: 
+            if percentage_difference >= self.discount_percentage:
                 old_price_value = old_price_value.replace('.', ',')
                 return self.yellow_color_decimal, ':arrow_down: {}%\nCustava R$ {}'.format(percentage_difference, old_price_value)
-    except: 
+    except:
         if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
             return self.white_color_decimal, ':arrows_counterclockwise: Estava indisponível'
 

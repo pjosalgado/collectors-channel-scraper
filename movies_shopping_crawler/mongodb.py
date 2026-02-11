@@ -39,17 +39,30 @@ class MongoDbPipeline(object):
         item_found = self.col.find_one({'url': item['url']})
 
         if item_found:
-            id_item_found = item_found.get('_id')
-            item.update({'_id': id_item_found})
-            item.update({'created_at': item_found.get('created_at')})
+            id_item_found, item = prepare_existing_item(self, item, item_found)
             self.col.update_one({'_id': id_item_found}, {'$set': dict(item)})
             log.info('Updated item with id <{}> using <{}>'.format(id_item_found, item))
             item.update({'old_item': item_found})
         else:
-            created_at = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
-            item.update({'created_at': created_at})
-            id_item_new = self.col.insert_one(dict(item)).inserted_id
-            item.update({'_id': id_item_new})
-            log.info('Inserted item <{}> with id <{}>'.format(item, id_item_new))
+            item = prepare_new_item(self, item)
+            id_new_item = self.col.insert_one(dict(item)).inserted_id
+            item.update({'_id': id_new_item})
+            log.info('Inserted item <{}> with id <{}>'.format(item, id_new_item))
 
         return item
+
+
+def prepare_existing_item(self, new_item, current_item):
+
+    item_id = current_item.get('_id')
+
+    new_item.update({'_id': item_id})
+    new_item.update({'created_at': current_item.get('created_at')})
+    new_item.update({'previous_price': current_item.get('price')})
+
+    return item_id, new_item
+
+
+def prepare_new_item(self, new_item):
+    new_item.update({'created_at': new_item.get('timestamp')})
+    return new_item
