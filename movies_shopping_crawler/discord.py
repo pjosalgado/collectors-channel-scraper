@@ -3,6 +3,7 @@
 import logging as log
 import requests
 from scrapy.exceptions import DropItem
+import time
 
 class DiscordPipeline(object):
 
@@ -26,7 +27,7 @@ class DiscordPipeline(object):
 
     def process_item(self, item, spider):
 
-        log.info('Processing in DiscordPipeline item <{}>'.format(item))
+        log.debug('Processing in DiscordPipeline item <{}>'.format(item))
 
         if 'previous_price' in item:
             message_color, message_text = get_notification_status(self, item)
@@ -37,7 +38,7 @@ class DiscordPipeline(object):
         price = item['price'].replace('.', ',')
 
         if message_text is None or price == 'Indisponível':
-            log.warning('Status not relevant in item <{}>'.format(item))
+            log.debug('Not sending Discord notification for item <{}>'.format(item.get('url')))
             return item
 
         footer_message = '📄 {}'.format(item['spider_url_pretty_name'])
@@ -86,8 +87,10 @@ class DiscordPipeline(object):
             'Content-Type': 'application/json'
         }
 
-        log.info('Sending message to Discord...')
+        log.info('Sending Discord notification for item <{}>'.format(item.get('url')))
         requests.post(self.url, json=json, headers=headers)
+
+        time.sleep(0.5) # prevent rate limit
 
         return item
 

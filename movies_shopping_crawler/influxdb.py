@@ -25,24 +25,24 @@ class InfluxDbPipeline(object):
     def open_spider(self, spider): 
         self.client = InfluxDBClient(url=self.url, token=self.token)
         self.write_api = self.client.write_api(write_options=SYNCHRONOUS)
-        log.info('Opened InfluxDB connection to <{}>'.format(spider.name))
+        log.debug('Opened InfluxDB connection to <{}>'.format(spider.name))
         self.data = []
 
 
     def close_spider(self, spider): 
         if self.client and self.write_api: 
-            log.info('Writing on InfluxDB these points <{}>'.format(self.data))
+            log.debug('Writing on InfluxDB these points <{}>'.format(self.data))
             self.write_api.write(self.bucket, self.org, self.data)
             self.write_api.close()
             self.client.close()
-            log.info('Closed InfluxDB connection to <{}>'.format(spider.name))
+            log.debug('Closed InfluxDB connection to <{}>'.format(spider.name))
         else: 
-            log.info('InfluxDB connection already closed to <{}>'.format(spider.name))
+            log.debug('InfluxDB connection already closed to <{}>'.format(spider.name))
 
 
     def process_item(self, item, spider):
 
-        log.info('Processing in InfluxDbPipeline item <{}>'.format(item))
+        log.debug('Processing in InfluxDbPipeline item <{}>'.format(item))
 
         spider_name = item['spider']
         measurement = 'prices_{}'.format(spider_name)

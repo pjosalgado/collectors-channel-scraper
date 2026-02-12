@@ -3,6 +3,7 @@
 import logging as log
 import requests
 from scrapy.exceptions import DropItem
+import time
 
 class TelegramPipeline(object):
 
@@ -28,7 +29,7 @@ class TelegramPipeline(object):
 
     def process_item(self, item, spider):
 
-        log.info('Processing in TelegramPipeline item <{}>'.format(item))
+        log.debug('Processing in TelegramPipeline item <{}>'.format(item))
 
         if 'previous_price' in item:
             message_text = get_notification_status(self, item)
@@ -38,7 +39,7 @@ class TelegramPipeline(object):
         price = item['price'].replace('.', ',')
 
         if message_text is None or price == 'Indisponível':
-            log.warning('Status not relevant in item <{}>'.format(item))
+            log.debug('Not sending Telegram notification for item <{}>'.format(item.get('url')))
             return item
 
         title = item['title']
@@ -66,8 +67,10 @@ class TelegramPipeline(object):
             'caption': message
         }
 
-        log.info('Sending message to Telegram...')
+        log.info('Sending Telegram notification for item <{}>'.format(item.get('url')))
         requests.post(url, data)
+
+        time.sleep(0.5) # prevent rate limit
 
         return item
 
