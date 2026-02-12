@@ -9,10 +9,8 @@ influxdb_settings="-s INFLUXDB_URL=$INFLUXDB_URL -s INFLUXDB_ORG=$INFLUXDB_ORG -
 discord_settings="-s DISCORD_URL=$DISCORD_URL"
 telegram_settings="-s TELEGRAM_TOKEN=$TELEGRAM_TOKEN -s TELEGRAM_CHAT_ID=$TELEGRAM_CHAT_ID -s TELEGRAM_THREAD_ID=$TELEGRAM_THREAD_ID"
 notification_settings="-s NOTIFICATION_DISCOUNT_PERCENTAGE=$NOTIFICATION_DISCOUNT_PERCENTAGE -s NOTIFICATION_RESTOCK=$NOTIFICATION_RESTOCK"
-additional_settings="-s AUTOUNIT_ENABLED=False"
-settings="${mongo_settings} ${influxdb_settings} ${discord_settings} ${telegram_settings} ${notification_settings} ${additional_settings}"
+settings="${mongo_settings} ${influxdb_settings} ${discord_settings} ${telegram_settings} ${notification_settings}
 
-rm -r -f autounit
 mkdir -p logs
 mkdir -p outputs
 

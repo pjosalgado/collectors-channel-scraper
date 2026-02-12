@@ -36,9 +36,7 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-SPIDER_MIDDLEWARES = {
-    # 'scrapy_autounit.AutounitMiddleware': 950
-}
+SPIDER_MIDDLEWARES = { }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
@@ -57,8 +55,8 @@ SPIDER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'movies_shopping_crawler.mongodb.MongoDbPipeline': 300,
     'movies_shopping_crawler.influxdb.InfluxDbPipeline': 310,
-    'movies_shopping_crawler.discord.DiscordPipeline': 400,
-    'movies_shopping_crawler.telegram.TelegramPipeline': 410
+    'movies_shopping_crawler.telegram.TelegramPipeline': 400,
+    'movies_shopping_crawler.discord.DiscordPipeline': 410
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -81,11 +79,6 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-
-# Autounit
-# AUTOUNIT_ENABLED = True
-AUTOUNIT_DONT_TEST_OUTPUT_FIELDS = ['timestamp']
-AUTOUNIT_DONT_RECORD_SPIDER_ATTRS = ['pagination_enabled']
 
 # Telegram
 TELEGRAM_PARSE_MODE = 'Markdown'
