@@ -3,10 +3,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = 'project',
-    version = '2.12.0',
-    packages = find_packages(),
-    entry_points = {
+    name='project',
+    version='2.12.0',
+    packages=find_packages(),
+    entry_points={
         'scrapy': [
             'settings = movies_shopping_crawler.settings'
         ]

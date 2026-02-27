@@ -5,5 +5,5 @@ requirements:
 
 stack: scrapy:2.14-latest
 
-apikeys: 
-  default: $SHUB_API_KEY
+apikeys:
+  default: $ZYTE_API_KEY

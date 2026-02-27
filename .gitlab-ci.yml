@@ -2,6 +2,7 @@ image: python:3.12.7-slim
 
 stages:
   - test
+  - build
   - deploy
 
 include:
@@ -10,14 +11,39 @@ include:
 sast:
   stage: test
 
-zyte:
-  stage: deploy
-  script:
-    - pip install -r requirements.txt
-    - sed -i "s/\$SHUB_API_KEY/$SHUB_API_KEY/g" scrapinghub.yml
-    - shub deploy
+docker-hub:
+  stage: build
   only:
     - master
+  image: docker:27
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    IMAGE_NAME: paulosalgado/collectors-channel-scraper
+  before_script:
+    - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+    - docker buildx create --driver docker-container --use
+  script:
+    - VERSION=$(sed -n "s/.*version=['\"]\([^'\"]*\)['\"].*/\1/p" setup.py)
+    - sed -i "s/\$VERSION/$VERSION/g" Dockerfile
+    - |
+      docker buildx build \
+        --platform=linux/amd64,linux/arm64 \
+        --push \
+        -t ${IMAGE_NAME}:${VERSION} \
+        -t ${IMAGE_NAME}:latest \
+        .
+
+zyte:
+  stage: deploy
+  only:
+    - master
+  script:
+    - pip install -r requirements.txt
+    - sed -i "s/\$ZYTE_API_KEY/$ZYTE_API_KEY/g" scrapinghub.yml
+    - shub deploy
   environment:
     name: zyte
     url: $ENV_URL

@@ -1,7 +1,7 @@
 FROM python:3.12.7-slim
 
-LABEL maintainer="Paulo Salgado <pjosalgado@gmail.com>"
-LABEL version="2.12.0"
+LABEL MAINTAINER="Paulo Salgado <pjosalgado@gmail.com>"
+LABEL VERSION="$VERSION"
 
 WORKDIR /python-docker
 
