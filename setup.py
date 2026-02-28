@@ -3,8 +3,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='project',
-    version='2.12.0',
+    name='collectors-channel-scraper',
+    version='2.12.1',
     packages=find_packages(),
     entry_points={
         'scrapy': [

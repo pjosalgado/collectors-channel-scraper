@@ -18,5 +18,5 @@ export INFLUXDB_BUCKET=
 export DISCORD_URL=
 
 # Notification - Telegram
-# export TELEGRAM_TOKEN=
-# export TELEGRAM_CHAT_ID=
+export TELEGRAM_TOKEN=
+export TELEGRAM_CHAT_ID=
