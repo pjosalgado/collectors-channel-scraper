@@ -7,7 +7,7 @@ pyOpenSSL>=25.3.0
 pymongo==4.16.0
 pytz==2025.2
 scrapinghub-entrypoint-scrapy>=0.14.1
-scrapy==2.14.1
+scrapy==2.14.2
 setuptools>=82.0.0
 shub==2.16.0
 Twisted==25.5.0
