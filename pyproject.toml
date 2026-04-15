@@ -7,7 +7,7 @@ readme = "README.md"
 version = "2.13.0"
 
 [tool.poetry.dependencies]
-cryptography = "46.0.5"
+cryptography = "46.0.7"
 dnspython = "2.8.0"
 influxdb = "5.3.2"
 influxdb-client = "1.50.0"
