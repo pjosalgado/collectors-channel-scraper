@@ -23,10 +23,12 @@ docker-hub:
     DOCKER_TLS_CERTDIR: ""
     IMAGE_NAME: paulosalgado/collectors-channel-scraper
   before_script:
+    - pip install poetry
     - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
     - docker buildx create --driver docker-container --use
   script:
-    - VERSION=$(sed -n "s/.*version=['\"]\([^'\"]*\)['\"].*/\1/p" setup.py)
+    - VERSION=$(poetry version -s)
+    - sed -i "s/\$VERSION/$VERSION/g" setup.py
     - sed -i "s/\$VERSION/$VERSION/g" Dockerfile
     - |
       docker buildx build \
@@ -40,10 +42,17 @@ zyte:
   stage: deploy
   only:
     - master
+  image: python:3.12.7-slim
+  before_script:
+    - pip install --no-cache-dir "poetry[export]"
+    - poetry export --only main -f requirements.txt --output requirements.txt --without-hashes
   script:
-    - pip install -r requirements.txt
     - sed -i "s/\$ZYTE_API_KEY/$ZYTE_API_KEY/g" scrapinghub.yml
     - shub deploy
   environment:
     name: zyte
     url: $ENV_URL
+  cache:
+    paths:
+      - .cache/pypoetry
+      - .venv

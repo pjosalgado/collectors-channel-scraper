@@ -1,0 +1,28 @@
+[tool.poetry]
+authors = ["Paulo Salgado <pjosalgado@gmail.com>"]
+description = ""
+license = "GNU GPLv3"
+name = "collectors-channel-scraper"
+readme = "README.md"
+version = "2.13.0"
+
+[tool.poetry.dependencies]
+cryptography = "46.0.5"
+dnspython = "2.8.0"
+influxdb = "5.3.2"
+influxdb-client = "1.50.0"
+legacy-cgi = "2.6.4"
+pip = ">=24.1.2"
+pymongo = "4.16.0"
+pyopenssl = ">=25.3.0"
+python = "^3.12"
+pytz = "2025.2"
+scrapinghub-entrypoint-scrapy = ">=0.14.1"
+scrapy = "2.14.1"
+setuptools = ">=82.0.0"
+shub = "2.16.0"
+twisted = "25.5.0"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
