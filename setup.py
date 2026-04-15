@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='collectors-channel-scraper',
-    version='2.12.1',
+    version='$VERSION',
     packages=find_packages(),
     entry_points={
         'scrapy': [

@@ -15,22 +15,22 @@ mkdir -p logs
 mkdir -p outputs
 
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Amazon'
-scrapy crawl amazon ${args} ${settings} -o outputs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').log
+poetry run scrapy crawl amazon ${args} ${settings} -o outputs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/amazon-$(date +'%Y-%m-%d-%H-%M-%S').log
 
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Colecione Clássicos'
-scrapy crawl colecioneclassicos ${args} ${settings} -o outputs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').log
+poetry run scrapy crawl colecioneclassicos ${args} ${settings} -o outputs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/colecioneclassicos-$(date +'%Y-%m-%d-%H-%M-%S').log
 
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Fam DVD'
-scrapy crawl famdvd ${args} ${settings} -o outputs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').log
+poetry run scrapy crawl famdvd ${args} ${settings} -o outputs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').log
 
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 iMusic BR'
-scrapy crawl imusicbr ${args} ${settings} -o outputs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').log
+poetry run scrapy crawl imusicbr ${args} ${settings} -o outputs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').log
 
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 The Originals'
-scrapy crawl theoriginals ${args} ${settings} -o outputs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').log
+poetry run scrapy crawl theoriginals ${args} ${settings} -o outputs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/theoriginals-$(date +'%Y-%m-%d-%H-%M-%S').log
 
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Versátil'
-scrapy crawl versatil ${args} ${settings} -o outputs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').log
+poetry run scrapy crawl versatil ${args} ${settings} -o outputs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/versatil-$(date +'%Y-%m-%d-%H-%M-%S').log
 
 echo $(date +'%d/%m/%Y %H:%M:%S') '- ✅ Process finished!'
 exit 0

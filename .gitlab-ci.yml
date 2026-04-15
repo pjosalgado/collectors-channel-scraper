@@ -25,9 +25,10 @@ docker-hub:
   before_script:
     - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
     - docker buildx create --driver docker-container --use
+    - VERSION=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
   script:
-    - VERSION=$(sed -n "s/.*version=['\"]\([^'\"]*\)['\"].*/\1/p" setup.py)
-    - sed -i "s/\$VERSION/$VERSION/g" Dockerfile
+    - sed -i "s|\$VERSION|$VERSION|g" setup.py
+    - sed -i "s|\$VERSION|$VERSION|g" Dockerfile
     - |
       docker buildx build \
         --platform=linux/amd64,linux/arm64 \
@@ -40,10 +41,22 @@ zyte:
   stage: deploy
   only:
     - master
+  image: python:3.12.7-slim
+  before_script:
+    - VERSION=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
+    - sed -i "s|\$VERSION|$VERSION|g" setup.py
+    - python3 -m pip install --upgrade pip
+    - python3 -m pip install poetry poetry-plugin-export
+    - poetry config virtualenvs.create false
+    - poetry install --no-root --only main
+    - poetry export --only main -f requirements.txt --output requirements.txt --without-hashes
   script:
-    - pip install -r requirements.txt
     - sed -i "s/\$ZYTE_API_KEY/$ZYTE_API_KEY/g" scrapinghub.yml
-    - shub deploy
+    - poetry run shub deploy
   environment:
     name: zyte
     url: $ENV_URL
+  cache:
+    paths:
+      - .cache/pypoetry
+      - .venv
