@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from datetime import datetime, time
+from datetime import datetime
+import time
 import pytz
 from curl_cffi import requests
 from scrapy.http import HtmlResponse
