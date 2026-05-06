@@ -10,40 +10,40 @@ class AmazonSpider(scrapy.Spider):
 
     urls = {
         'Blu-ray - Popularidade'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AacIgbzmOjSmDNVsO5jUcv3O6m%2BltVqwiWDouNHSFPAI',
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=popularity-rank&dc&ds=v1%3AacIgbzmOjSmDNVsO5jUcv3O6m%2BltVqwiWDouNHSFPAI&rnid=19392499011&ref=sr_st_popularity-rank',
 
         'Blu-ray - Avaliação dos clientes (média)'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AVo%2BB8f211fCNbbqcXbHRCaQ1PngevKwUmtSs%2BO3Kmmc',
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=review-rank&dc&ds=v1%3AVo%2BB8f211fCNbbqcXbHRCaQ1PngevKwUmtSs%2BO3Kmmc&rnid=19392499011&ref=sr_st_review-rank',
 
         'Blu-ray - Data de lançamento'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=date-desc-rank&dc&rnid=19392499011&ref=sr_st_date-desc-rank&ds=v1%3AgoepJFYF%2BY9brRUB9JMVMHEYacuIvZ5HbSVN1w%2BChjI',
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=date-desc-rank&dc&ds=v1%3AgoepJFYF%2BY9brRUB9JMVMHEYacuIvZ5HbSVN1w%2BChjI&rnid=19392499011&ref=sr_st_date-desc-rank',
 
         'DVD - Popularidade'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=popularity-rank&dc&rnid=19392499011&ref=sr_st_popularity-rank&ds=v1%3AiGwzt4iz80dTecPkbgNkJPd4HD7tn1nw8nb07%2Bu7Cj8',
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=popularity-rank&dc&ds=v1%3AiGwzt4iz80dTecPkbgNkJPd4HD7tn1nw8nb07%2Bu7Cj8&rnid=19392499011&ref=sr_st_popularity-rank',
 
         'DVD - Avaliação dos clientes (média)'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=review-rank&dc&rnid=19392499011&ref=sr_st_review-rank&ds=v1%3AONLj%2Bmx%2ByW38VYFsMwFpvruY0n1EKoWTuUfkxonslAI',
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=review-rank&dc&ds=v1%3AONLj%2Bmx%2ByW38VYFsMwFpvruY0n1EKoWTuUfkxonslAI&rnid=19392499011&ref=sr_st_review-rank',
 
         'DVD - Data de lançamento'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=date-desc-rank&dc&rnid=19392499011&ref=sr_st_date-desc-rank&ds=v1%3AaVBJzfs9wGav2eXqoPRXgzEjh2zPHGLnZGIk9kLbXtI',
+            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=date-desc-rank&dc&ds=v1%3AaVBJzfs9wGav2eXqoPRXgzEjh2zPHGLnZGIk9kLbXtI&rnid=19392499011&ref=sr_st_date-desc-rank',
 
         'Busca "SteelBook" - Destaques'
             : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&ref=nb_sb_ss_ts-doa-p_2_4',
 
         'Busca "SteelBook" - Avaliação dos clientes (média)'
-            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=review-rank&ref=sr_st_review-rank&ds=v1%3AZCBb3OekUtQ6cRr2CzeHUlYZK2dfieBfO9vIJtELLew',
+            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=review-rank&ds=v1%3AZCBb3OekUtQ6cRr2CzeHUlYZK2dfieBfO9vIJtELLew&ref=sr_st_review-rank',
 
         'Busca "SteelBook" - Data de lançamento'
-            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=date-desc-rank&ref=sr_st_date-desc-rank&ds=v1%3AQZoIeIQms2le9YUVuUJuq6n9AgqnVQC5qPHJ%2F80wFbk',
+            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=date-desc-rank&ds=v1%3AQZoIeIQms2le9YUVuUJuq6n9AgqnVQC5qPHJ%2F80wFbk&ref=sr_st_date-desc-rank',
 
         'Busca "4K" - Destaques'
-            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=relevancerank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_relevancerank&ds=v1%3ATYqaoTfv1pNBrMcY8%2BmfDipx0297McbkQLaHkOTqO5I',
+            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=relevancerank&ds=v1%3ATYqaoTfv1pNBrMcY8%2BmfDipx0297McbkQLaHkOTqO5I&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_relevancerank',
 
         'Busca "4K" - Avaliação dos clientes (média)'
-            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=review-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_review-rank&ds=v1%3AXMWJ8JjsGkGzdGuovrAtl0iIvNBWzD8iGqKojdwUQgg',
+            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=review-rank&ds=v1%3AXMWJ8JjsGkGzdGuovrAtl0iIvNBWzD8iGqKojdwUQgg&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_review-rank',
 
         'Busca "4K" - Data de lançamento'
-            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=date-desc-rank&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_date-desc-rank&ds=v1%3A3rfglGb3u%2FGs1nKm6z4znU8lHazi%2Bj9oZOp5bMAHfdc',
+            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=date-desc-rank&ds=v1%3A3rfglGb3u%2FGs1nKm6z4znU8lHazi%2Bj9oZOp5bMAHfdc&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_date-desc-rank',
     }
 
     start_urls = list(urls.values())

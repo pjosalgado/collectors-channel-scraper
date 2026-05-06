@@ -9,20 +9,17 @@ class VersatilSpider(scrapy.Spider):
     spider_pretty_name = 'Versátil Home Vídeo'
 
     urls = {
-        'Promoção'
-            : 'https://www.versatilhv.com.br/categoria/promocao',
-
         'Raridades'
-            : 'https://www.versatilhv.com.br/categoria/raridades',
+            : 'https://www.versatilhv.com.br/raridades/c',
 
         'Pré-venda'
-            : 'https://www.versatilhv.com.br/categoria/pre-venda',
+            : 'https://www.versatilhv.com.br/pre-venda/c',
 
         'Lançamentos'
-            : 'https://www.versatilhv.com.br/categoria/lancamentos',
+            : 'https://www.versatilhv.com.br/lancamentos/c',
 
         'Edições Especiais'
-            : 'https://www.versatilhv.com.br/categoria/edicoes-especiais',
+            : 'https://www.versatilhv.com.br/edicoes-especiais/c',
     }
 
     start_urls = list(urls.values())
@@ -31,13 +28,13 @@ class VersatilSpider(scrapy.Spider):
     ]
 
 
-    def parse(self, response): 
+    def parse(self, response):
 
         self.log('visited <{}>'.format(response.url))
 
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.product-in-card'): 
+        for movie_selector in response.css('.product-in-card'):
 
             full_title = movie_selector.css('h3 > span::text').get().strip()
             title, title_type = get_title_details(full_title)
@@ -48,10 +45,10 @@ class VersatilSpider(scrapy.Spider):
             price = movie_selector.css('meta[itemprop=price]::attr(content)').get()
             is_unavailable = movie_selector.css('.announcement').get()
 
-            if is_unavailable is None: 
+            if is_unavailable is None:
                 price = price.strip()
                 price = '%.2f' % float(price)
-            else: 
+            else:
                 price = 'Indisponível'
 
             cover_url = movie_selector.css('.image > img::attr(data-src)').get().strip()
@@ -80,9 +77,9 @@ class VersatilSpider(scrapy.Spider):
                 self.log('Ignoring title due to filter: {}'.format(full_title))
 
 
-def get_title_details(full_title, default_type = 'DVD'): 
-    if full_title.lower().startswith('blu-ray'): 
+def get_title_details(full_title, default_type = 'DVD'):
+    if full_title.lower().startswith('blu-ray'):
         title_split = full_title.split(': ', 1)
         return (title_split[1].strip(), title_split[0].strip())
-    else: 
+    else:
         return (full_title, default_type)
