@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from datetime import datetime
+from datetime import datetime, time
 import pytz
+from curl_cffi import requests
+from scrapy.http import HtmlResponse
+import scrapy
+from scrapy import Request
 
 class ImusicBrSpider(scrapy.Spider):
 
@@ -28,8 +32,6 @@ class ImusicBrSpider(scrapy.Spider):
             : 'https://imusic.br.com/exposure/22810/crunchyroll',
     }
 
-    start_urls = list(urls.values())
-
     ignored_categories = [
         'Paperback Book',
     ]
@@ -54,10 +56,27 @@ class ImusicBrSpider(scrapy.Spider):
         return spider
 
 
+    def start_requests(self):
+        for name, url in self.urls.items():
+            r = requests.get(url, impersonate="chrome")
+            request = Request(url=url, meta={
+                'spider_url_pretty_name': name
+            })
+            response = HtmlResponse(
+                url=url,
+                body=r.text,
+                encoding="utf-8",
+                request=request
+            )
+            yield from self.parse(response)
+            time.sleep(2)
+
+
     def parse(self, response): 
 
         self.log('visited <{}>'.format(response.url))
 
+        spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
         for movie_selector in response.css('.item-teaser'): 
@@ -77,11 +96,6 @@ class ImusicBrSpider(scrapy.Spider):
                 price = '%.2f' % float(price)
 
             cover_url = movie_selector.css('.item-cover::attr(src)').get().strip()
-
-            spider_url_pretty_name = next(
-                (name for name, url in self.urls.items() if response.url.startswith(url)),
-                response.url  # To do: remove later when it's stable
-            )
 
             if title_type not in self.ignored_categories:
                 yield {
