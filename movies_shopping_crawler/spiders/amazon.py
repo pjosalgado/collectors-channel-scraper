@@ -85,25 +85,25 @@ class AmazonSpider(scrapy.Spider):
 
 
     @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs): 
+    def from_crawler(cls, crawler, *args, **kwargs):
 
-        try: 
+        try:
             pagination_enabled = kwargs['PAGINATION_ENABLED'] == "True"
-        except: 
+        except:
             pagination_enabled = False
-        
+
         spider = cls(
             *args, 
             pagination_enabled=pagination_enabled, 
             **kwargs
         )
-        
+
         spider._set_crawler(crawler)
-        
+
         return spider
 
 
-    def parse(self, response): 
+    def parse(self, response):
 
         self.log('visited <{}>'.format(response.url))
 
@@ -112,7 +112,7 @@ class AmazonSpider(scrapy.Spider):
         result = response.css('.s-result-list > .s-result-item > .sg-col-inner')
         self.log('{} movies found'.format(len(result)))
 
-        for movie_selector in result: 
+        for movie_selector in result:
             
             title = movie_selector.css('.a-size-medium > span::text').get().strip()
 
@@ -126,8 +126,8 @@ class AmazonSpider(scrapy.Spider):
                 response.url  # To do: remove later when it's stable
             )
 
-            if full_title_small_edition is not None: 
-                if title_type_small_edition not in self.ignored_categories: 
+            if full_title_small_edition is not None:
+                if title_type_small_edition not in self.ignored_categories:
                     yield {
                         'spider': self.name,
                         'spider_pretty_name': self.spider_pretty_name,
@@ -141,14 +141,14 @@ class AmazonSpider(scrapy.Spider):
                         'price': price_small_edition,
                         'cover_url': cover_url
                     }
-                else: 
+                else:
                     self.log('ignoring title due to filter {} - {}'.format(title_type_small_edition, full_title_small_edition))
 
             full_title_micro_edition, title_type_micro_edition, url_micro_edition, price_micro_edition = \
                 get_edition_details('.a-section.a-spacing-none.a-spacing-top-micro', movie_selector, response, title)
 
-            if full_title_micro_edition is not None: 
-                if title_type_micro_edition not in self.ignored_categories: 
+            if full_title_micro_edition is not None:
+                if title_type_micro_edition not in self.ignored_categories:
                     yield {
                         'spider': self.name,
                         'spider_pretty_name': self.spider_pretty_name,
@@ -162,14 +162,14 @@ class AmazonSpider(scrapy.Spider):
                         'price': price_micro_edition,
                         'cover_url': cover_url
                     }
-                else: 
+                else:
                     self.log('ignoring title due to filter {} - {}'.format(title_type_micro_edition, full_title_micro_edition))
 
             full_title_mini_edition, title_type_mini_edition, url_mini_edition, price_mini_edition = \
                 get_edition_details('.a-section.a-spacing-none.a-spacing-top-mini', movie_selector, response, title)
 
-            if full_title_mini_edition is not None: 
-                if title_type_mini_edition not in self.ignored_categories: 
+            if full_title_mini_edition is not None:
+                if title_type_mini_edition not in self.ignored_categories:
                     yield {
                         'spider': self.name,
                         'spider_pretty_name': self.spider_pretty_name,
@@ -183,20 +183,20 @@ class AmazonSpider(scrapy.Spider):
                         'price': price_mini_edition,
                         'cover_url': cover_url
                     }
-                else: 
+                else:
                     self.log('ignoring title due to filter {} - {}'.format(title_type_mini_edition, full_title_mini_edition))
 
-        if self.pagination_enabled: 
+        if self.pagination_enabled:
             next_page = response.css('.a-last > a::attr(href)').get()
-            if next_page: 
+            if next_page:
                 next_page = response.urljoin(next_page.strip())
                 self.log('next page is <{}>'.format(next_page))
                 yield scrapy.Request(next_page)
-            else: 
+            else:
                 self.log('next page not found')
 
 
-def get_edition_details(object, selector, response, title): 
+def get_edition_details(object, selector, response, title):
 
     edition = selector.css(object)
     edition = edition[0] if edition is not None and len(edition) > 0 else None
@@ -206,7 +206,7 @@ def get_edition_details(object, selector, response, title):
     title_type = header.css('::text').get() if header is not None else None
     title_type = title_type.strip() if title_type is not None else None
 
-    if title_type is None: 
+    if title_type is None:
         return None, None, None, None
 
     url = header.css('::attr(href)').get()
@@ -216,7 +216,7 @@ def get_edition_details(object, selector, response, title):
     price = edition.css('.a-offscreen::text').get()
     price = price.strip() if price is not None else 'Indisponível'
 
-    if price != 'Indisponível': 
+    if price != 'Indisponível':
         price = price.replace(' ', '').replace('R$', '').replace('.', '').replace(',', '.')
         price = '%.2f' % float(price)
 

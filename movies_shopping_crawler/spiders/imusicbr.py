@@ -38,48 +38,51 @@ class ImusicBrSpider(scrapy.Spider):
 
 
     @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs): 
+    def from_crawler(cls, crawler, *args, **kwargs):
 
-        try: 
+        try:
             pagination_enabled = kwargs['PAGINATION_ENABLED'] == "True"
-        except: 
+        except:
             pagination_enabled = False
-        
+
         spider = cls(
             *args, 
             pagination_enabled=pagination_enabled, 
             **kwargs
         )
-        
+
         spider._set_crawler(crawler)
-        
+
         return spider
 
 
     def start_requests(self):
+
         for name, url in self.urls.items():
             r = requests.get(url, impersonate="chrome")
             request = Request(url=url, meta={
                 'spider_url_pretty_name': name
             })
+
             response = HtmlResponse(
                 url=url,
                 body=r.text,
                 encoding="utf-8",
                 request=request
             )
+
             yield from self.parse(response)
             time.sleep(2)
 
 
-    def parse(self, response): 
+    def parse(self, response):
 
         self.log('visited <{}>'.format(response.url))
 
         spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.item-teaser'): 
+        for movie_selector in response.css('.item-teaser'):
 
             title = movie_selector.css('.title::attr(title)').get().strip()
             title_type = movie_selector.css('.type > span > acronym::text').get().strip()
@@ -91,7 +94,7 @@ class ImusicBrSpider(scrapy.Spider):
             price = movie_selector.css('.price::text').get()
             price = price.strip() if price is not None else 'Indisponível'
 
-            if price != 'Indisponível': 
+            if price != 'Indisponível':
                 price = price.replace(' ', '').replace('R$', '').replace('.', '').replace(',', '.').strip()
                 price = '%.2f' % float(price)
 
@@ -118,9 +121,9 @@ class ImusicBrSpider(scrapy.Spider):
         if self.pagination_enabled:
             next_page = response.css('.navbar-right > .btn-primary')
             next_page = next_page[1].css('::attr(href)').get() if len(next_page) > 0 else None
-            if next_page: 
+            if next_page:
                 next_page = response.urljoin(next_page.strip())
                 self.log('next page is <{}>'.format(next_page))
                 yield scrapy.Request(next_page)
-            else: 
+            else:
                 self.log('next page not found')

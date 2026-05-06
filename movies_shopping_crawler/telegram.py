@@ -15,19 +15,20 @@ class TelegramPipeline(object):
         self.discount_percentage = discount_percentage
         self.restock_notification = restock_notification
 
+
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
-            token = crawler.settings.get('TELEGRAM_TOKEN'), 
-            chat_id = crawler.settings.get('TELEGRAM_CHAT_ID'), 
-            thread_id = crawler.settings.get('TELEGRAM_THREAD_ID'), 
+            token = crawler.settings.get('TELEGRAM_TOKEN'),
+            chat_id = crawler.settings.get('TELEGRAM_CHAT_ID'),
+            thread_id = crawler.settings.get('TELEGRAM_THREAD_ID'),
             parse_mode = crawler.settings.get('TELEGRAM_PARSE_MODE'),
             discount_percentage = float(crawler.settings.get('NOTIFICATION_DISCOUNT_PERCENTAGE')),
             restock_notification = crawler.settings.get('NOTIFICATION_RESTOCK') == "True"
         )
 
 
-    def process_item(self, item, spider):
+    def process_item(self, item):
 
         log.debug('Processing in TelegramPipeline item <{}>'.format(item))
 
@@ -60,10 +61,10 @@ class TelegramPipeline(object):
 
         url = 'https://api.telegram.org/bot' + self.token + '/sendPhoto'
         data = {
-            'chat_id': self.chat_id, 
-            'message_thread_id': self.thread_id, 
-            'photo': cover_url, 
-            'parse_mode': self.parse_mode, 
+            'chat_id': self.chat_id,
+            'message_thread_id': self.thread_id,
+            'photo': cover_url,
+            'parse_mode': self.parse_mode,
             'caption': message
         }
 

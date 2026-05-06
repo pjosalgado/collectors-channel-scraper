@@ -11,10 +11,12 @@ class DiscordPipeline(object):
     yellow_color_decimal = 16776960
     white_color_decimal  = 16777215
 
+
     def __init__(self, url, discount_percentage, restock_notification):
         self.url = url
         self.discount_percentage = discount_percentage
         self.restock_notification = restock_notification
+
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -25,7 +27,7 @@ class DiscordPipeline(object):
         )
 
 
-    def process_item(self, item, spider):
+    def process_item(self, item):
 
         log.debug('Processing in DiscordPipeline item <{}>'.format(item))
 
@@ -100,7 +102,7 @@ def get_notification_status(self, item):
     new_price_value = item['price']
     old_price_value = item['previous_price']
 
-    try: 
+    try:
         if float(new_price_value) < float(old_price_value):
             old_price = float(old_price_value)
             new_price = float(new_price_value)
@@ -110,7 +112,7 @@ def get_notification_status(self, item):
                 old_price_value = old_price_value.replace('.', ',')
                 return self.yellow_color_decimal, ':arrow_down: {}%\nCustava R$ {}'.format(percentage_difference, old_price_value)
     except:
-        if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification: 
+        if old_price_value == 'Indisponível' and new_price_value != 'Indisponível' and self.restock_notification:
             return self.white_color_decimal, ':arrows_counterclockwise: Estava indisponível'
 
     return None, None

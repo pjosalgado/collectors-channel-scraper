@@ -2,37 +2,38 @@
 
 import logging as log
 from pymongo import MongoClient
-from datetime import datetime
-import pytz
 
 class MongoDbPipeline(object):
 
-    def __init__(self, url):
+    def __init__(self, url, spider):
         self.url = url
+        self.spider = spider
+
 
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
-            url = crawler.settings.get('MONGO_URL')
+            url = crawler.settings.get('MONGO_URL'),
+            spider = crawler.spider
         )
 
 
-    def open_spider(self, spider):
+    def open_spider(self):
         self.client = MongoClient(self.url)
         db = self.client.movies
-        self.col = db[spider.name]
-        log.debug('Opened MongoDB connection to <{}>'.format(spider.name))
+        self.col = db[self.spider.name]
+        log.debug('Opened MongoDB connection to <{}>'.format(self.spider.name))
 
 
-    def close_spider(self, spider):
+    def close_spider(self):
         if self.client:
             self.client.close()
-            log.debug('Closed MongoDB connection to <{}>'.format(spider.name))
+            log.debug('Closed MongoDB connection to <{}>'.format(self.spider.name))
         else:
-            log.debug('MongoDB connection already closed to <{}>'.format(spider.name))
+            log.debug('MongoDB connection already closed to <{}>'.format(self.spider.name))
 
 
-    def process_item(self, item, spider):
+    def process_item(self, item):
 
         log.debug('Processing in MongoDbPipeline item <{}>'.format(item))
 

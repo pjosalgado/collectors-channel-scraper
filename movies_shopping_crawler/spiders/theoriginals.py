@@ -41,21 +41,21 @@ class TheOriginalsSpider(scrapy.Spider):
 
 
     @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs): 
+    def from_crawler(cls, crawler, *args, **kwargs):
 
-        try: 
+        try:
             pagination_enabled = kwargs['PAGINATION_ENABLED'] == "True"
-        except: 
+        except:
             pagination_enabled = False
-        
+
         spider = cls(
             *args, 
             pagination_enabled=pagination_enabled, 
             **kwargs
         )
-        
+
         spider._set_crawler(crawler)
-        
+
         return spider
 
 
@@ -65,7 +65,7 @@ class TheOriginalsSpider(scrapy.Spider):
 
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.listagem-item'): 
+        for movie_selector in response.css('.listagem-item'):
 
             full_title = movie_selector.css('.nome-produto::text').get().strip()
             title = full_title
@@ -76,7 +76,7 @@ class TheOriginalsSpider(scrapy.Spider):
             price = movie_selector.css('.preco-promocional::text').get()
             price = price.strip() if price is not None else 'Indisponível'
 
-            if price != 'Indisponível': 
+            if price != 'Indisponível':
                 price = price.replace(' ', '').replace('R$', '').replace('.', '').replace(',', '.')
                 price = '%.2f' % float(price)
 
@@ -104,21 +104,21 @@ class TheOriginalsSpider(scrapy.Spider):
             else:
                 self.log('Ignoring title due to filter: {}'.format(full_title))
 
-        if self.pagination_enabled: 
+        if self.pagination_enabled:
             next_page = response.css('a[rel=next]::attr(href)').get()
-            if next_page: 
+            if next_page:
                 next_page = response.urljoin(next_page.strip())
                 self.log('next page is <{}>'.format(next_page))
                 yield scrapy.Request(next_page)
-            else: 
+            else:
                 self.log('next page not found')
 
 
-def get_title_type(full_title, default_type = 'Desconhecido'): 
+def get_title_type(full_title, default_type = 'Desconhecido'):
     full_title = full_title.lower().replace('-', '').replace(' ', '')
-    if 'bluray' in full_title or 'steelbook' in full_title: 
+    if 'bluray' in full_title or 'steelbook' in full_title:
         return 'Blu-ray'
-    elif 'dvd' in full_title: 
+    elif 'dvd' in full_title:
         return 'DVD'
-    else: 
+    else:
         return default_type

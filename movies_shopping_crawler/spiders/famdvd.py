@@ -30,31 +30,31 @@ class FamDvdSpider(scrapy.Spider):
 
 
     @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs): 
+    def from_crawler(cls, crawler, *args, **kwargs):
 
-        try: 
+        try:
             pagination_enabled = kwargs['PAGINATION_ENABLED'] == "True"
-        except: 
+        except:
             pagination_enabled = False
-        
+
         spider = cls(
             *args, 
             pagination_enabled=pagination_enabled, 
             **kwargs
         )
-        
+
         spider._set_crawler(crawler)
-        
+
         return spider
 
 
-    def parse(self, response): 
+    def parse(self, response):
         
         self.log('visited <{}>'.format(response.url))
 
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.products-grid > li.item'): 
+        for movie_selector in response.css('.products-grid > li.item'):
             
             full_title = movie_selector.css('h3 > a::text').get().strip()
             title, title_type = get_title_details(full_title)
@@ -65,7 +65,7 @@ class FamDvdSpider(scrapy.Spider):
             price = movie_selector.css('.price::text').get() if price is None else price
             price = price.strip() if price is not None else 'Indisponível'
 
-            if price != 'Indisponível': 
+            if price != 'Indisponível':
                 price = price.replace(' ', '').replace('R$', '').replace('.', '').replace(',', '.')
                 price = '%.2f' % float(price)
 
@@ -93,22 +93,22 @@ class FamDvdSpider(scrapy.Spider):
             else:
                 self.log('Ignoring title due to filter: {}'.format(full_title))
 
-        if self.pagination_enabled: 
+        if self.pagination_enabled:
             next_page = response.css('.i-next::attr(href)').get()
-            if next_page: 
+            if next_page:
                 next_page = next_page.strip()
                 self.log('next page is <{}>'.format(next_page))
                 yield scrapy.Request(next_page)
-            else: 
+            else:
                 self.log('next page not found')
 
 
-def get_title_details(full_title, default_type = 'DVD'): 
-    if full_title.lower().startswith('blu-ray'): 
+def get_title_details(full_title, default_type = 'DVD'):
+    if full_title.lower().startswith('blu-ray'):
         title_split = full_title.split(' - ', 1)
         return (title_split[1].strip(), title_split[0].strip())
-    if full_title.lower().startswith('funko pop!'): 
+    if full_title.lower().startswith('funko pop!'):
         title_split = full_title.split(' - ', 1)
         return (title_split[1].strip(), 'Funko Pop!')
-    else: 
+    else:
         return (full_title, default_type)
