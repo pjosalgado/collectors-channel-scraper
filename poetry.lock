@@ -1590,6 +1590,18 @@ files = [
 ]
 
 [[package]]
+name = "tomlkit"
+version = "0.14.0"
+description = "Style preserving TOML library"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "tomlkit-0.14.0-py3-none-any.whl", hash = "sha256:592064ed85b40fa213469f81ac584f67a4f2992509a7c3ea2d632208623a3680"},
+    {file = "tomlkit-0.14.0.tar.gz", hash = "sha256:cf00efca415dbd57575befb1f6634c4f42d2d87dbba376128adb42c121b87064"},
+]
+
+[[package]]
 name = "tqdm"
 version = "4.55.1"
 description = "Fast, Extensible Progress Meter"
@@ -1733,4 +1745,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "ed4e8f88394545207eed4c8ab5020627c40c6c7407b318c9a048d7fea63f6638"
+content-hash = "83c95ddec31f9d96366b3b66e199d83aa463dbea05c1a10fb98eea3f69bc708e"

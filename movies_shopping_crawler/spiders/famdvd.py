@@ -2,6 +2,7 @@
 import scrapy
 from datetime import datetime
 import pytz
+import logging as log
 
 class FamDvdSpider(scrapy.Spider):
 
@@ -37,25 +38,23 @@ class FamDvdSpider(scrapy.Spider):
         except:
             pagination_enabled = False
 
-        spider = cls(
-            *args, 
-            pagination_enabled=pagination_enabled, 
-            **kwargs
-        )
-
+        spider = cls(*args, pagination_enabled=pagination_enabled, **kwargs)
         spider._set_crawler(crawler)
 
         return spider
 
 
     def parse(self, response):
-        
-        self.log('visited <{}>'.format(response.url))
+
+        log.info('Visited <{}>'.format(response.url))
 
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.products-grid > li.item'):
-            
+        result = response.css('.products-grid > li.item')
+        log.info('{} movies found'.format(len(result)))
+
+        for movie_selector in result:
+
             full_title = movie_selector.css('h3 > a::text').get().strip()
             title, title_type = get_title_details(full_title)
 
@@ -91,16 +90,16 @@ class FamDvdSpider(scrapy.Spider):
                     'cover_url': cover_url
                 }
             else:
-                self.log('Ignoring title due to filter: {}'.format(full_title))
+                log.debug('Ignoring title due to filter: {}'.format(full_title))
 
         if self.pagination_enabled:
             next_page = response.css('.i-next::attr(href)').get()
             if next_page:
                 next_page = next_page.strip()
-                self.log('next page is <{}>'.format(next_page))
+                log.info('Next page is <{}>'.format(next_page))
                 yield scrapy.Request(next_page)
             else:
-                self.log('next page not found')
+                log.info('Next page not found')
 
 
 def get_title_details(full_title, default_type = 'DVD'):

@@ -2,6 +2,7 @@
 import scrapy
 from datetime import datetime
 import pytz
+import logging as log
 
 class VersatilSpider(scrapy.Spider):
 
@@ -30,11 +31,14 @@ class VersatilSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        self.log('visited <{}>'.format(response.url))
+        log.info('Visited <{}>'.format(response.url))
 
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.product-in-card'):
+        result = response.css('.product-in-card')
+        log.info('{} movies found'.format(len(result)))
+
+        for movie_selector in result:
 
             full_title = movie_selector.css('h3 > span::text').get().strip()
             title, title_type = get_title_details(full_title)
@@ -74,7 +78,7 @@ class VersatilSpider(scrapy.Spider):
                     'cover_url': cover_url
                 }
             else:
-                self.log('Ignoring title due to filter: {}'.format(full_title))
+                log.debug('Ignoring title due to filter: {}'.format(full_title))
 
 
 def get_title_details(full_title, default_type = 'DVD'):

@@ -7,6 +7,8 @@ from curl_cffi import requests
 from scrapy.http import HtmlResponse
 import scrapy
 from scrapy import Request
+from tomlkit import item
+import logging as log
 
 class ImusicBrSpider(scrapy.Spider):
 
@@ -46,44 +48,30 @@ class ImusicBrSpider(scrapy.Spider):
         except:
             pagination_enabled = False
 
-        spider = cls(
-            *args, 
-            pagination_enabled=pagination_enabled, 
-            **kwargs
-        )
-
+        spider = cls(*args, pagination_enabled=pagination_enabled, **kwargs)
         spider._set_crawler(crawler)
 
         return spider
 
 
-    def start_requests(self):
-
+    async def start(self):
         for name, url in self.urls.items():
-            r = requests.get(url, impersonate="chrome")
-            request = Request(url=url, meta={
-                'spider_url_pretty_name': name
-            })
-
-            response = HtmlResponse(
-                url=url,
-                body=r.text,
-                encoding="utf-8",
-                request=request
-            )
-
-            yield from self.parse(response)
-            time.sleep(2)
+            response = self.fetch_page(url, name)
+            for item in self.parse(response):
+                yield item
 
 
     def parse(self, response):
 
-        self.log('visited <{}>'.format(response.url))
+        log.info('Visited <{}>'.format(response.url))
 
         spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        for movie_selector in response.css('.item-teaser'):
+        result = response.css('.item-teaser')
+        log.info('{} movies found'.format(len(result)))
+
+        for movie_selector in result:
 
             title = movie_selector.css('.title::attr(title)').get().strip()
             title_type = movie_selector.css('.type > span > acronym::text').get().strip()
@@ -117,14 +105,31 @@ class ImusicBrSpider(scrapy.Spider):
                     'additional_info': '+ ~95% de impostos'
                 }
             else:
-                self.log('Ignoring title due to filter: {}'.format(full_title))
+                log.debug('Ignoring title due to filter: {}'.format(full_title))
 
         if self.pagination_enabled:
             next_page = response.css('.navbar-right > .btn-primary')
             next_page = next_page[1].css('::attr(href)').get() if len(next_page) > 0 else None
             if next_page:
                 next_page = response.urljoin(next_page.strip())
-                self.log('next page is <{}>'.format(next_page))
-                yield scrapy.Request(next_page)
+                log.info('Next page is <{}>'.format(next_page))
+                response = self.fetch_page(next_page, spider_url_pretty_name)
+                yield from self.parse(response)
             else:
-                self.log('next page not found')
+                log.info('Next page not found')
+
+
+    def fetch_page(self, url, spider_url_pretty_name):
+
+        request = Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name
+            }
+        )
+        request_body = requests.get(url, impersonate="chrome")
+        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
+
+        time.sleep(2)
+
+        return response
