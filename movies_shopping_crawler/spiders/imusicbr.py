@@ -69,7 +69,7 @@ class ImusicBrSpider(scrapy.Spider):
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
         result = response.css('.item-teaser')
-        log.info('{} movies found'.format(len(result)))
+        log.info('{} titles found'.format(len(result)))
 
         for movie_selector in result:
 
@@ -90,7 +90,7 @@ class ImusicBrSpider(scrapy.Spider):
             cover_url = movie_selector.css('.item-cover::attr(src)').get().strip()
 
             if title_type not in self.ignored_categories:
-                yield {
+                title_found = {
                     'spider': self.name,
                     'spider_pretty_name': self.spider_pretty_name,
                     'spider_url': response.url,
@@ -104,6 +104,8 @@ class ImusicBrSpider(scrapy.Spider):
                     'cover_url': cover_url,
                     'additional_info': '+ ~95% de impostos'
                 }
+                log.debug('Title found: {}'.format(full_title))
+                yield title_found
             else:
                 log.debug('Ignoring title due to filter: {}'.format(full_title))
 
@@ -117,6 +119,8 @@ class ImusicBrSpider(scrapy.Spider):
                 yield from self.parse(response)
             else:
                 log.info('Next page not found')
+        else:
+            log.info('Pagination is disabled')
 
 
     def fetch_page(self, url, spider_url_pretty_name):

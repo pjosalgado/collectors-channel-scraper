@@ -31,6 +31,9 @@ class TheOriginalsSpider(scrapy.Spider):
         'STEELBOOK'
             : 'https://www.theoriginals.com.br/steelbook',
 
+        'LP VINIL'
+            : 'https://www.theoriginals.com.br/lp-vinil',
+
         'PROMOÇÕES'
             : 'https://www.theoriginals.com.br/filmes-promocoes',
     }
@@ -62,7 +65,7 @@ class TheOriginalsSpider(scrapy.Spider):
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
         result = response.css('.listagem-item')
-        log.info('{} movies found'.format(len(result)))
+        log.info('{} titles found'.format(len(result)))
 
         for movie_selector in result:
 
@@ -87,7 +90,7 @@ class TheOriginalsSpider(scrapy.Spider):
             )
 
             if title_type not in self.ignored_categories:
-                yield {
+                title_found = {
                     'spider': self.name,
                     'spider_pretty_name': self.spider_pretty_name,
                     'spider_url': response.url,
@@ -100,6 +103,8 @@ class TheOriginalsSpider(scrapy.Spider):
                     'price': price,
                     'cover_url': cover_url
                 }
+                log.debug('Title found: {}'.format(full_title))
+                yield title_found
             else:
                 log.debug('Ignoring title due to filter: {}'.format(full_title))
 
@@ -111,6 +116,8 @@ class TheOriginalsSpider(scrapy.Spider):
                 yield scrapy.Request(next_page)
             else:
                 log.info('Next page not found')
+        else:
+            log.info('Pagination is disabled')
 
 
 def get_title_type(full_title, default_type = 'Desconhecido'):
