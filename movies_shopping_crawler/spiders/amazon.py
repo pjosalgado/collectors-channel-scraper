@@ -11,16 +11,16 @@ class AmazonSpider(scrapy.Spider):
 
     urls = {
         'Blu-ray - Mais vendidos'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011&s=popularity-rank&dc&ds=v1%3AacIgbzmOjSmDNVsO5jUcv3O6m%2BltVqwiWDouNHSFPAI&rnid=19392499011&ref=sr_st_popularity-rank',
+            : 'https://www.amazon.com.br/s?i=dvd&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392502011',
 
         'DVD - Mais vendidos'
-            : 'https://www.amazon.com.br/s?i=dvd&bbn=7791856011&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011&s=popularity-rank&dc&ds=v1%3AiGwzt4iz80dTecPkbgNkJPd4HD7tn1nw8nb07%2Bu7Cj8&rnid=19392499011&ref=sr_st_popularity-rank',
+            : 'https://www.amazon.com.br/s?i=dvd&rh=n%3A7791856011%2Cp_n_binding_browse-bin%3A19392504011',
 
         'Busca "SteelBook" - Em destaque'
-            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&ref=nb_sb_ss_ts-doa-p_2_4',
+            : 'https://www.amazon.com.br/s?k=Steelbook&i=dvd&s=relevancerank',
 
         'Busca "4K" - Em destaque'
-            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=relevancerank&ds=v1%3ATYqaoTfv1pNBrMcY8%2BmfDipx0297McbkQLaHkOTqO5I&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=sr_st_relevancerank',
+            : 'https://www.amazon.com.br/s?k=4K&i=dvd&s=relevancerank',
     }
 
     start_urls = list(urls.values())
