@@ -3,6 +3,10 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
+import time
+from scrapy import Request
+from scrapy.http import HtmlResponse
+from curl_cffi import requests
 
 class FamDvdSpider(scrapy.Spider):
 
@@ -44,10 +48,18 @@ class FamDvdSpider(scrapy.Spider):
         return spider
 
 
+    async def start(self):
+        for name, url in self.urls.items():
+            response = self.fetch_page(url, name)
+            for item in self.parse(response):
+                yield item
+
+
     def parse(self, response):
 
         log.info('Visited <{}>'.format(response.url))
 
+        spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
         result = response.css('.products-grid > li.item')
@@ -56,7 +68,7 @@ class FamDvdSpider(scrapy.Spider):
         for movie_selector in result:
 
             full_title = movie_selector.css('h3 > a::text').get().strip()
-            title, title_type = get_title_details(full_title)
+            title, title_type = self.get_title_details(full_title)
 
             url = movie_selector.css('h3 > a::attr(href)').get().strip()
             
@@ -69,11 +81,6 @@ class FamDvdSpider(scrapy.Spider):
                 price = '%.2f' % float(price)
 
             cover_url = movie_selector.css('img::attr(src)').get().strip()
-
-            spider_url_pretty_name = next(
-                (name for name, url in self.urls.items() if response.url.startswith(url)),
-                response.url  # To do: remove later when it's stable
-            )
 
             if title_type not in self.ignored_categories:
                 title_found = {
@@ -97,21 +104,38 @@ class FamDvdSpider(scrapy.Spider):
         if self.pagination_enabled:
             next_page = response.css('.i-next::attr(href)').get()
             if next_page:
-                next_page = next_page.strip()
+                next_page = response.urljoin(next_page.strip())
                 log.info('Next page is <{}>'.format(next_page))
-                yield scrapy.Request(next_page)
+                response = self.fetch_page(next_page, spider_url_pretty_name)
+                yield from self.parse(response)
             else:
                 log.info('Next page not found')
         else:
             log.info('Pagination is disabled')
 
 
-def get_title_details(full_title, default_type = 'DVD'):
-    if full_title.lower().startswith('blu-ray'):
-        title_split = full_title.split(' - ', 1)
-        return (title_split[1].strip(), title_split[0].strip())
-    if full_title.lower().startswith('funko pop!'):
-        title_split = full_title.split(' - ', 1)
-        return (title_split[1].strip(), 'Funko Pop!')
-    else:
-        return (full_title, default_type)
+    def get_title_details(self, full_title, default_type = 'DVD'):
+        if full_title.lower().startswith('blu-ray'):
+            title_split = full_title.split(' - ', 1)
+            return (title_split[1].strip(), title_split[0].strip())
+        if full_title.lower().startswith('funko pop!'):
+            title_split = full_title.split(' - ', 1)
+            return (title_split[1].strip(), 'Funko Pop!')
+        else:
+            return (full_title, default_type)
+
+
+    def fetch_page(self, url, spider_url_pretty_name):
+
+        request = Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name
+            }
+        )
+        request_body = requests.get(url, impersonate="chrome")
+        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
+
+        time.sleep(2)
+
+        return response

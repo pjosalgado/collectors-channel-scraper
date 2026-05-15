@@ -3,6 +3,10 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
+import time
+from scrapy import Request
+from scrapy.http import HtmlResponse
+from curl_cffi import requests
 
 class VersatilSpider(scrapy.Spider):
 
@@ -29,10 +33,18 @@ class VersatilSpider(scrapy.Spider):
     ]
 
 
+    async def start(self):
+        for name, url in self.urls.items():
+            response = self.fetch_page(url, name)
+            for item in self.parse(response):
+                yield item
+
+
     def parse(self, response):
 
         log.info('Visited <{}>'.format(response.url))
 
+        spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
         result = response.css('.product-in-card')
@@ -41,7 +53,7 @@ class VersatilSpider(scrapy.Spider):
         for movie_selector in result:
 
             full_title = movie_selector.css('h3 > span::text').get().strip()
-            title, title_type = get_title_details(full_title)
+            title, title_type = self.get_title_details(full_title)
 
             url = movie_selector.css('.dados > a::attr(href)').get().strip()
             url = 'https://www.versatilhv.com.br' + url
@@ -57,11 +69,6 @@ class VersatilSpider(scrapy.Spider):
 
             cover_url = movie_selector.css('.image > img::attr(data-src)').get().strip()
             cover_url = 'http:' + cover_url
-
-            spider_url_pretty_name = next(
-                (name for name, url in self.urls.items() if response.url.startswith(url)),
-                response.url  # To do: remove later when it's stable
-            )
 
             if title_type not in self.ignored_categories:
                 title_found = {
@@ -85,9 +92,25 @@ class VersatilSpider(scrapy.Spider):
         log.info('Pagination is disabled')
 
 
-def get_title_details(full_title, default_type = 'DVD'):
-    if full_title.lower().startswith('blu-ray'):
-        title_split = full_title.split(': ', 1)
-        return (title_split[1].strip(), title_split[0].strip())
-    else:
-        return (full_title, default_type)
+    def get_title_details(self, full_title, default_type = 'DVD'):
+        if full_title.lower().startswith('blu-ray'):
+            title_split = full_title.split(': ', 1)
+            return (title_split[1].strip(), title_split[0].strip())
+        else:
+            return (full_title, default_type)
+
+
+    def fetch_page(self, url, spider_url_pretty_name):
+
+        request = Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name
+            }
+        )
+        request_body = requests.get(url, impersonate="chrome")
+        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
+
+        time.sleep(2)
+
+        return response

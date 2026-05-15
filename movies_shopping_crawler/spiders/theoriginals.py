@@ -3,6 +3,10 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
+import time
+from scrapy import Request
+from scrapy.http import HtmlResponse
+from curl_cffi import requests
 
 class TheOriginalsSpider(scrapy.Spider):
 
@@ -58,10 +62,18 @@ class TheOriginalsSpider(scrapy.Spider):
         return spider
 
 
+    async def start(self):
+        for name, url in self.urls.items():
+            response = self.fetch_page(url, name)
+            for item in self.parse(response):
+                yield item
+
+
     def parse(self, response):
 
         log.info('Visited <{}>'.format(response.url))
 
+        spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
         result = response.css('.listagem-item')
@@ -71,7 +83,7 @@ class TheOriginalsSpider(scrapy.Spider):
 
             full_title = movie_selector.css('.nome-produto::text').get().strip()
             title = full_title
-            title_type = get_title_type(full_title)
+            title_type = self.get_title_type(full_title)
 
             url = movie_selector.css('.produto-sobrepor::attr(href)').get().strip()
             
@@ -83,11 +95,6 @@ class TheOriginalsSpider(scrapy.Spider):
                 price = '%.2f' % float(price)
 
             cover_url = movie_selector.css('img::attr(src)').get().strip()
-
-            spider_url_pretty_name = next(
-                (name for name, url in self.urls.items() if response.url.startswith(url)),
-                response.url  # To do: remove later when it's stable
-            )
 
             if title_type not in self.ignored_categories:
                 title_found = {
@@ -110,21 +117,38 @@ class TheOriginalsSpider(scrapy.Spider):
 
         if self.pagination_enabled:
             next_page = response.css('a[rel=next]::attr(href)').get()
-            if next_page:
+            if next_page and next_page != '#':
                 next_page = response.urljoin(next_page.strip())
                 log.info('Next page is <{}>'.format(next_page))
-                yield scrapy.Request(next_page)
+                response = self.fetch_page(next_page, spider_url_pretty_name)
+                yield from self.parse(response)
             else:
                 log.info('Next page not found')
         else:
             log.info('Pagination is disabled')
 
 
-def get_title_type(full_title, default_type = 'Desconhecido'):
-    full_title = full_title.lower().replace('-', '').replace(' ', '')
-    if 'bluray' in full_title or 'steelbook' in full_title:
-        return 'Blu-ray'
-    elif 'dvd' in full_title:
-        return 'DVD'
-    else:
-        return default_type
+    def get_title_type(self, full_title, default_type = 'Desconhecido'):
+        full_title = full_title.lower().replace('-', '').replace(' ', '')
+        if 'bluray' in full_title or 'steelbook' in full_title:
+            return 'Blu-ray'
+        elif 'dvd' in full_title:
+            return 'DVD'
+        else:
+            return default_type
+
+
+    def fetch_page(self, url, spider_url_pretty_name):
+
+        request = Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name
+            }
+        )
+        request_body = requests.get(url, impersonate="chrome")
+        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
+
+        time.sleep(2)
+
+        return response

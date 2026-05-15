@@ -3,6 +3,10 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
+import time
+from scrapy import Request
+from scrapy.http import HtmlResponse
+from curl_cffi import requests
 
 class AmazonSpider(scrapy.Spider):
 
@@ -75,10 +79,18 @@ class AmazonSpider(scrapy.Spider):
         return spider
 
 
+    async def start(self):
+        for name, url in self.urls.items():
+            response = self.fetch_page(url, name)
+            for item in self.parse(response):
+                yield item
+
+
     def parse(self, response):
 
         log.info('Visited <{}>'.format(response.url))
 
+        spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
         result = response.css('.s-result-list > .s-result-item > .sg-col-inner')
@@ -91,12 +103,7 @@ class AmazonSpider(scrapy.Spider):
             cover_url = movie_selector.css('img::attr(src)').get().strip()
 
             full_title_small_edition, title_type_small_edition, url_small_edition, price_small_edition = \
-                get_edition_details('.puis-price-instructions-style', movie_selector, response, title)
-
-            spider_url_pretty_name = next(
-                (name for name, url in self.urls.items() if response.url.startswith(url)),
-                response.url  # To do: remove later when it's stable
-            )
+                self.get_edition_details('.puis-price-instructions-style', movie_selector, response, title)
 
             if full_title_small_edition is not None:
                 if title_type_small_edition not in self.ignored_categories:
@@ -121,7 +128,7 @@ class AmazonSpider(scrapy.Spider):
                 log.debug('Small edition not found: {}'.format(title))
 
             full_title_micro_edition, title_type_micro_edition, url_micro_edition, price_micro_edition = \
-                get_edition_details('.a-spacing-top-mini > .a-row > .a-spacing-mini', movie_selector, response, title, 0)
+                self.get_edition_details('.a-spacing-top-mini > .a-row > .a-spacing-mini', movie_selector, response, title, 0)
 
             if full_title_micro_edition is not None:
                 if title_type_micro_edition not in self.ignored_categories:
@@ -146,7 +153,7 @@ class AmazonSpider(scrapy.Spider):
                 log.debug('Micro edition not found: {}'.format(title))
 
             full_title_mini_edition, title_type_mini_edition, url_mini_edition, price_mini_edition = \
-                get_edition_details('.a-spacing-top-mini > .a-row > .a-spacing-mini', movie_selector, response, title, 1)
+                self.get_edition_details('.a-spacing-top-mini > .a-row > .a-spacing-mini', movie_selector, response, title, 1)
 
             if full_title_mini_edition is not None:
                 if title_type_mini_edition not in self.ignored_categories:
@@ -175,37 +182,54 @@ class AmazonSpider(scrapy.Spider):
             if next_page:
                 next_page = response.urljoin(next_page.strip())
                 log.info('Next page is <{}>'.format(next_page))
-                yield scrapy.Request(next_page)
+                response = self.fetch_page(next_page, spider_url_pretty_name)
+                yield from self.parse(response)
             else:
                 log.info('Next page not found')
         else:
             log.info('Pagination is disabled')
 
 
-def get_edition_details(object, selector, response, title, position=0):
+    def get_edition_details(self, object, selector, response, title, position=0):
 
-    edition = selector.css(object)
-    edition = edition[position] if edition is not None and len(edition) > position else None
+        edition = selector.css(object)
+        edition = edition[position] if edition is not None and len(edition) > position else None
 
-    header = edition.css('.a-size-base.a-text-bold') if edition is not None else None
+        header = edition.css('.a-size-base.a-text-bold') if edition is not None else None
 
-    title_type = header.css('::text').get() if header is not None else None
-    title_type = title_type.strip() if title_type is not None else None
+        title_type = header.css('::text').get() if header is not None else None
+        title_type = title_type.strip() if title_type is not None else None
 
-    if title_type is None:
-        return None, None, None, None
+        if title_type is None:
+            return None, None, None, None
 
-    url = header.css('::attr(href)').get()
-    url = response.urljoin(url.strip())
-    url = url[:url.rfind('/')]
+        url = header.css('::attr(href)').get()
+        url = response.urljoin(url.strip())
+        url = url[:url.rfind('/')]
 
-    price = edition.css('.a-offscreen::text').get()
-    price = price.strip() if price is not None else 'Indisponível'
+        price = edition.css('.a-offscreen::text').get()
+        price = price.strip() if price is not None else 'Indisponível'
 
-    if price != 'Indisponível':
-        price = price.replace(' ', '').replace('R$', '').replace('.', '').replace(',', '.')
-        price = '%.2f' % float(price)
+        if price != 'Indisponível':
+            price = price.replace(' ', '').replace('R$', '').replace('.', '').replace(',', '.')
+            price = '%.2f' % float(price)
 
-    full_title = title_type + ' - ' + title
-    
-    return full_title, title_type, url, price
+        full_title = title_type + ' - ' + title
+        
+        return full_title, title_type, url, price
+
+
+    def fetch_page(self, url, spider_url_pretty_name):
+
+        request = Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name
+            }
+        )
+        request_body = requests.get(url, impersonate="chrome")
+        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
+
+        time.sleep(2)
+
+        return response
