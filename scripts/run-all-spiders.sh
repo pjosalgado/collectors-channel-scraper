@@ -23,6 +23,9 @@ poetry run scrapy crawl colecioneclassicos ${args} ${settings} -o outputs/coleci
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 Fam DVD'
 poetry run scrapy crawl famdvd ${args} ${settings} -o outputs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/famdvd-$(date +'%Y-%m-%d-%H-%M-%S').log
 
+echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 FILMICCA'
+poetry run scrapy crawl filmicca ${args} ${settings} -o outputs/filmicca-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/filmicca-$(date +'%Y-%m-%d-%H-%M-%S').log
+
 echo $(date +'%d/%m/%Y %H:%M:%S') '- 🔍 iMusic BR'
 poetry run scrapy crawl imusicbr ${args} ${settings} -o outputs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').csv # &> logs/imusicbr-$(date +'%Y-%m-%d-%H-%M-%S').log
 
