@@ -71,7 +71,7 @@ class TheOriginalsSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        log.info('Visited <{}>'.format(response.url))
+        log.info('Visited <{}> - HTTP status: {}'.format(response.url, response.status))
 
         spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
