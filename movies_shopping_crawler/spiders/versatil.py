@@ -3,7 +3,10 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
-from scrapy_playwright.page import PageMethod
+import time
+from scrapy import Request
+from scrapy.http import HtmlResponse
+from curl_cffi import requests
 
 class VersatilSpider(scrapy.Spider):
 
@@ -49,24 +52,11 @@ class VersatilSpider(scrapy.Spider):
         return spider
 
 
-    def make_request(self, url, spider_url_pretty_name, current_page=1):
-        return scrapy.Request(
-            url=url,
-            meta={
-                'spider_url_pretty_name': spider_url_pretty_name,
-                'current_page': current_page,
-                'playwright': True,
-                'playwright_page_methods': [
-                    PageMethod('wait_for_selector', 'jet-card'),
-                ],
-            },
-            callback=self.parse,
-        )
-
-
     async def start(self):
         for name, url in self.urls.items():
-            yield self.make_request(url, name)
+            response = self.fetch_page(url, name)
+            for item in self.parse(response):
+                yield item
 
 
     def parse(self, response):
@@ -124,7 +114,8 @@ class VersatilSpider(scrapy.Spider):
                 if next_page:
                     next_page = response.urljoin(next_page.strip())
                     log.info('Next page is <{}>'.format(next_page))
-                    yield self.make_request(next_page, spider_url_pretty_name, current_page + 1)
+                    response = self.fetch_page(next_page, spider_url_pretty_name, current_page + 1)
+                    yield from self.parse(response)
                 else:
                     log.info('Next page not found')
             else:
@@ -139,3 +130,20 @@ class VersatilSpider(scrapy.Spider):
             return (title_split[1].strip(), title_split[0].strip())
         else:
             return (full_title, default_type)
+
+
+    def fetch_page(self, url, spider_url_pretty_name, current_page=1):
+
+        request = Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name,
+                'current_page': current_page,
+            }
+        )
+        request_body = requests.get(url, impersonate="chrome")
+        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
+
+        time.sleep(self.settings.getfloat('DOWNLOAD_DELAY', 2))
+
+        return response

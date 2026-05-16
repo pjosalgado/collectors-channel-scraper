@@ -18,7 +18,6 @@ ROBOTSTXT_OBEY = False
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
 DOWNLOAD_DELAY = 2
-RANDOMIZE_DOWNLOAD_DELAY = True
 
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
@@ -81,15 +80,6 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-
-DOWNLOAD_HANDLERS = {
-    'http': 'scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler',
-    'https': 'scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler',
-}
-
-TWISTED_REACTOR = 'twisted.internet.asyncioreactor.AsyncioSelectorReactor'
-PLAYWRIGHT_LAUNCH_OPTIONS = {'headless': True}
-PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 30000
 
 # Telegram
 TELEGRAM_PARSE_MODE = 'Markdown'
