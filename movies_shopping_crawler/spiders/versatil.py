@@ -3,10 +3,7 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
-import time
-from scrapy import Request
-from scrapy.http import HtmlResponse
-from curl_cffi import requests
+from scrapy_playwright.page import PageMethod
 
 class VersatilSpider(scrapy.Spider):
 
@@ -33,11 +30,33 @@ class VersatilSpider(scrapy.Spider):
     ]
 
 
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+
+        try:
+            pagination_enabled = kwargs['PAGINATION_ENABLED'] == "True"
+        except:
+            pagination_enabled = False
+
+        spider = cls(*args, pagination_enabled=pagination_enabled, **kwargs)
+        spider._set_crawler(crawler)
+
+        return spider
+
+
     async def start(self):
         for name, url in self.urls.items():
-            response = self.fetch_page(url, name)
-            for item in self.parse(response):
-                yield item
+            yield scrapy.Request(
+                url=url,
+                meta={
+                    'spider_url_pretty_name': name,
+                    'playwright': True,
+                    'playwright_page_methods': [
+                        PageMethod('wait_for_selector', 'jet-card'),
+                    ],
+                },
+                callback=self.parse,
+            )
 
 
     def parse(self, response):
@@ -47,28 +66,23 @@ class VersatilSpider(scrapy.Spider):
         spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
 
-        result = response.css('.product-in-card')
+        result = response.css('jet-card .jet-card')
         log.info('{} titles found'.format(len(result)))
 
         for movie_selector in result:
 
-            full_title = movie_selector.css('h3 > span::text').get().strip()
+            full_title = (movie_selector.css('.product-info h3::text').get() or '').strip()
             title, title_type = self.get_title_details(full_title)
 
-            url = movie_selector.css('.dados > a::attr(href)').get().strip()
-            url = 'https://www.versatilhv.com.br' + url
+            url = (movie_selector.css('.product-image a::attr(href)').get() or '').strip()
+            if url and not url.startswith('http'):
+                url = 'https://www.versatilhv.com.br/' + url.lstrip('/')
 
-            price = movie_selector.css('meta[itemprop=price]::attr(content)').get()
-            is_unavailable = movie_selector.css('.announcement').get()
+            price = movie_selector.css('.best-price span::text').get()
+            price = price.strip() if price and not movie_selector.css('.product-availability').get() else 'Indisponível'
 
-            if is_unavailable is None:
-                price = price.strip()
-                price = '%.2f' % float(price)
-            else:
-                price = 'Indisponível'
-
-            cover_url = movie_selector.css('.image > img::attr(data-src)').get().strip()
-            cover_url = 'http:' + cover_url
+            cover_url = (movie_selector.css('.main-image img::attr(src)').get() or '').strip()
+            cover_url = 'https:' + cover_url if cover_url.startswith('//') else cover_url
 
             if title_type not in self.ignored_categories:
                 title_found = {
@@ -89,7 +103,26 @@ class VersatilSpider(scrapy.Spider):
             else:
                 log.debug('Ignoring title due to filter: {}'.format(full_title))
 
-        log.info('Pagination is disabled')
+        if self.pagination_enabled:
+            next_page = response.css('a.next-page::attr(href)').get()
+            if next_page:
+                next_page = response.urljoin(next_page.strip())
+                log.info('Next page is <{}>'.format(next_page))
+                yield scrapy.Request(
+                    url=next_page,
+                    meta={
+                        'spider_url_pretty_name': spider_url_pretty_name,
+                        'playwright': True,
+                        'playwright_page_methods': [
+                            PageMethod('wait_for_selector', 'jet-card'),
+                        ],
+                    },
+                    callback=self.parse,
+                )
+            else:
+                log.info('Next page not found')
+        else:
+            log.info('Pagination is disabled')
 
 
     def get_title_details(self, full_title, default_type = 'DVD'):
@@ -98,19 +131,3 @@ class VersatilSpider(scrapy.Spider):
             return (title_split[1].strip(), title_split[0].strip())
         else:
             return (full_title, default_type)
-
-
-    def fetch_page(self, url, spider_url_pretty_name):
-
-        request = Request(
-            url=url,
-            meta={
-                'spider_url_pretty_name': spider_url_pretty_name
-            }
-        )
-        request_body = requests.get(url, impersonate="chrome")
-        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
-
-        time.sleep(2)
-
-        return response

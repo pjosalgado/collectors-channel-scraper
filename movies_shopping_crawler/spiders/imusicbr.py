@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from datetime import datetime
-import time
 import pytz
-from curl_cffi import requests
-from scrapy.http import HtmlResponse
-import scrapy
-from scrapy import Request
-from tomlkit import item
+import time
 import logging as log
+from scrapy import Request
+from scrapy.http import HtmlResponse
+from curl_cffi import requests
+from tomlkit import item
 
 class ImusicBrSpider(scrapy.Spider):
 
@@ -134,6 +133,6 @@ class ImusicBrSpider(scrapy.Spider):
         request_body = requests.get(url, impersonate="chrome")
         response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
 
-        time.sleep(2)
+        time.sleep(self.settings.getfloat('DOWNLOAD_DELAY', 2))
 
         return response

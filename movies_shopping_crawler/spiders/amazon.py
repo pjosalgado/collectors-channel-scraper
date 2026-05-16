@@ -3,10 +3,7 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
-import time
-from scrapy import Request
-from scrapy.http import HtmlResponse
-from curl_cffi import requests
+from scrapy_playwright.page import PageMethod
 
 class AmazonSpider(scrapy.Spider):
 
@@ -79,11 +76,23 @@ class AmazonSpider(scrapy.Spider):
         return spider
 
 
+    def make_request(self, url, spider_url_pretty_name, wait_selector):
+        return scrapy.Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name,
+                'playwright': True,
+                'playwright_page_methods': [
+                    PageMethod('wait_for_selector', wait_selector),
+                ],
+            },
+            callback=self.parse,
+        )
+
+
     async def start(self):
         for name, url in self.urls.items():
-            response = self.fetch_page(url, name)
-            for item in self.parse(response):
-                yield item
+            yield self.make_request(url, name, '.s-result-list')
 
 
     def parse(self, response):
@@ -182,8 +191,7 @@ class AmazonSpider(scrapy.Spider):
             if next_page:
                 next_page = response.urljoin(next_page.strip())
                 log.info('Next page is <{}>'.format(next_page))
-                response = self.fetch_page(next_page, spider_url_pretty_name)
-                yield from self.parse(response)
+                yield self.make_request(next_page, spider_url_pretty_name, '.s-result-list')
             else:
                 log.info('Next page not found')
         else:
@@ -217,19 +225,3 @@ class AmazonSpider(scrapy.Spider):
         full_title = title_type + ' - ' + title
         
         return full_title, title_type, url, price
-
-
-    def fetch_page(self, url, spider_url_pretty_name):
-
-        request = Request(
-            url=url,
-            meta={
-                'spider_url_pretty_name': spider_url_pretty_name
-            }
-        )
-        request_body = requests.get(url, impersonate="chrome")
-        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
-
-        time.sleep(2)
-
-        return response

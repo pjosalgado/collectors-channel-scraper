@@ -1,9 +1,6 @@
 project: 432550
 
-requirements:
-  file: requirements.txt
-
-stack: scrapy:2.14-latest
+image: paulosalgado/collectors-channel-scraper:latest
 
 apikeys:
   default: $ZYTE_API_KEY

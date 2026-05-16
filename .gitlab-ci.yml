@@ -41,22 +41,17 @@ zyte:
   stage: deploy
   only:
     - master
+  needs:
+    - docker-hub
   image: python:3.12.7-slim
   before_script:
     - VERSION=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
     - sed -i "s|\$VERSION|$VERSION|g" setup.py
     - python3 -m pip install --upgrade pip
-    - python3 -m pip install poetry poetry-plugin-export
-    - poetry config virtualenvs.create false
-    - poetry install --no-root --only main
-    - poetry export --only main -f requirements.txt --output requirements.txt --without-hashes
+    - pip install shub
   script:
     - sed -i "s/\$ZYTE_API_KEY/$ZYTE_API_KEY/g" scrapinghub.yml
-    - poetry run shub deploy
+    - shub deploy
   environment:
     name: zyte
     url: $ENV_URL
-  cache:
-    paths:
-      - .cache/pypoetry
-      - .venv

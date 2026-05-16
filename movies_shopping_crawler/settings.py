@@ -17,7 +17,9 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-# DOWNLOAD_DELAY = 2
+DOWNLOAD_DELAY = 2
+RANDOMIZE_DOWNLOAD_DELAY = True
+
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -55,8 +57,8 @@ SPIDER_MIDDLEWARES = { }
 ITEM_PIPELINES = {
     'movies_shopping_crawler.mongodb.MongoDbPipeline': 300,
     'movies_shopping_crawler.influxdb.InfluxDbPipeline': 310,
-    'movies_shopping_crawler.telegram.TelegramPipeline': 400,
-    'movies_shopping_crawler.discord.DiscordPipeline': 410
+    'movies_shopping_crawler.discord.DiscordPipeline': 400,
+    'movies_shopping_crawler.telegram.TelegramPipeline': 410,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -79,6 +81,15 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+DOWNLOAD_HANDLERS = {
+    'http': 'scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler',
+    'https': 'scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler',
+}
+
+TWISTED_REACTOR = 'twisted.internet.asyncioreactor.AsyncioSelectorReactor'
+PLAYWRIGHT_LAUNCH_OPTIONS = {'headless': True}
+PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 30000
 
 # Telegram
 TELEGRAM_PARSE_MODE = 'Markdown'
