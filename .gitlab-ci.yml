@@ -46,31 +46,19 @@ zyte:
   stage: deploy
   only:
     - master
-  needs:
-    - docker-hub
   image: python:3.12.7-slim
-  services:
-    - docker:27-dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_BUILDKIT: "0"
   before_script:
-    - apt-get update && apt-get install -y docker.io
-    - pip install -U shub
     - VERSION=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
+    - sed -i "s|\$VERSION|$VERSION|g" setup.py
     - sed -i "s|\$VERSION|$VERSION|g" scrapinghub.yml
     - sed -i "s|\$ZYTE_API_KEY|$ZYTE_API_KEY|g" scrapinghub.yml
-    - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-    - docker pull ${IMAGE_NAME}:${VERSION}
+    - pip install -U shub
+    - pip install poetry poetry-plugin-export
+    - poetry config virtualenvs.create false
+    - poetry install --no-root --only main
+    - poetry export --only main -f requirements.txt --output requirements.txt --without-hashes
   script:
-    - |
-      OUTPUT=$(shub image deploy --version $VERSION 2>&1)
-      echo "$OUTPUT"
-      if echo "$OUTPUT" | grep -q "'status': 'error'"; then
-        echo "Deploy failed!"
-        exit 1
-      fi
+    - shub deploy
   environment:
     name: zyte
     url: $ENV_URL

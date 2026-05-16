@@ -3,8 +3,11 @@ import scrapy
 from datetime import datetime
 import pytz
 import logging as log
+import time
 import re
-from scrapy_playwright.page import PageMethod
+from scrapy import Request
+from scrapy.http import HtmlResponse
+from curl_cffi import requests
 
 class FilmiccaSpider(scrapy.Spider):
 
@@ -22,23 +25,11 @@ class FilmiccaSpider(scrapy.Spider):
     ]
 
 
-    def make_request(self, url, spider_url_pretty_name):
-        return scrapy.Request(
-            url=url,
-            meta={
-                'spider_url_pretty_name': spider_url_pretty_name,
-                'playwright': True,
-                'playwright_page_methods': [
-                    PageMethod('wait_for_selector', '.card'),
-                ],
-            },
-            callback=self.parse,
-        )
-
-
     async def start(self):
         for name, url in self.urls.items():
-            yield self.make_request(url, name)
+            response = self.fetch_page(url, name)
+            for item in self.parse(response):
+                yield item
 
 
     def parse(self, response):
@@ -95,3 +86,19 @@ class FilmiccaSpider(scrapy.Spider):
             return (cleaned_title, 'Blu-ray')
         else:
             return (cleaned_title, default_type)
+
+
+    def fetch_page(self, url, spider_url_pretty_name):
+
+        request = Request(
+            url=url,
+            meta={
+                'spider_url_pretty_name': spider_url_pretty_name
+            }
+        )
+        request_body = requests.get(url, impersonate="chrome")
+        response = HtmlResponse(url=url, body=request_body.text, encoding="utf-8", request=request)
+
+        time.sleep(self.settings.getfloat('DOWNLOAD_DELAY', 2))
+
+        return response
