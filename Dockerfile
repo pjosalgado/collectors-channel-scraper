@@ -1,11 +1,14 @@
 FROM python:3.12.7-slim
 
 LABEL MAINTAINER="Paulo Salgado <pjosalgado@gmail.com>"
-LABEL VERSION="$VERSION"
 
 WORKDIR /python-docker
 
-RUN apt update && apt install -y \
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
     libssl-dev \
@@ -26,15 +29,19 @@ RUN apt update && apt install -y \
     libpangocairo-1.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry
-RUN poetry config virtualenvs.create false
+RUN pip install --no-cache-dir poetry
+
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-interaction --no-ansi --no-root --only main
+
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi --no-root --only main
 
 RUN playwright install chromium
 
 COPY scrapy.cfg .
 COPY movies_shopping_crawler movies_shopping_crawler
 COPY scripts/run-all-spiders.sh .
+
+LABEL VERSION="$VERSION"
 
 CMD ["./run-all-spiders.sh"]

@@ -1,6 +1,6 @@
 project: 432550
 
-image: paulosalgado/collectors-channel-scraper:latest
+image: paulosalgado/collectors-channel-scraper:$VERSION
 
 apikeys:
   default: $ZYTE_API_KEY

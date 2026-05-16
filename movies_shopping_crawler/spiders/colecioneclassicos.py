@@ -44,17 +44,23 @@ class ColecioneClassicosSpider(scrapy.Spider):
         except:
             pagination_enabled = False
 
-        spider = cls(*args, pagination_enabled=pagination_enabled, **kwargs)
+        try:
+            max_pages = int(kwargs['PAGINATION_LIMIT'])
+        except:
+            max_pages = None
+
+        spider = cls(*args, pagination_enabled=pagination_enabled, max_pages=max_pages, **kwargs)
         spider._set_crawler(crawler)
 
         return spider
 
 
-    def make_request(self, url, spider_url_pretty_name):
+    def make_request(self, url, spider_url_pretty_name, current_page=1):
         return scrapy.Request(
             url=url,
             meta={
                 'spider_url_pretty_name': spider_url_pretty_name,
+                'current_page': current_page,
                 'playwright': True,
                 'playwright_page_methods': [
                     PageMethod('wait_for_selector', '.listagem-item'),
@@ -75,6 +81,7 @@ class ColecioneClassicosSpider(scrapy.Spider):
 
         spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
+        current_page = response.meta.get('current_page', 1)
 
         result = response.css('.listagem-item')
         log.info('{} titles found'.format(len(result)))
@@ -116,13 +123,16 @@ class ColecioneClassicosSpider(scrapy.Spider):
                 log.debug('Ignoring title due to filter: {}'.format(full_title))
 
         if self.pagination_enabled:
-            next_page = response.css('a[rel=next]::attr(href)').get()
-            if next_page and next_page != '#':
-                next_page = response.urljoin(next_page.strip())
-                log.info('Next page is <{}>'.format(next_page))
-                yield self.make_request(next_page, spider_url_pretty_name)
+            if self.max_pages is None or current_page < self.max_pages:
+                next_page = response.css('a[rel=next]::attr(href)').get()
+                if next_page and next_page != '#':
+                    next_page = response.urljoin(next_page.strip())
+                    log.info('Next page is <{}>'.format(next_page))
+                    yield self.make_request(next_page, spider_url_pretty_name, current_page + 1)
+                else:
+                    log.info('Next page not found')
             else:
-                log.info('Next page not found')
+                log.info('Max pages reached: {}'.format(self.max_pages))
         else:
             log.info('Pagination is disabled')
 

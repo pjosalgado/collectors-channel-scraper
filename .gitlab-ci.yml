@@ -5,6 +5,9 @@ stages:
   - build
   - deploy
 
+variables:
+  IMAGE_NAME: paulosalgado/collectors-channel-scraper
+
 include:
   - template: Security/SAST.gitlab-ci.yml
 
@@ -21,7 +24,7 @@ docker-hub:
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
-    IMAGE_NAME: paulosalgado/collectors-channel-scraper
+    DOCKER_BUILDKIT: "1"
   before_script:
     - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
     - docker buildx create --driver docker-container --use
@@ -32,6 +35,8 @@ docker-hub:
     - |
       docker buildx build \
         --platform=linux/amd64,linux/arm64 \
+        --cache-from=type=registry,ref=${IMAGE_NAME}:buildcache \
+        --cache-to=type=registry,ref=${IMAGE_NAME}:buildcache,mode=max \
         --push \
         -t ${IMAGE_NAME}:${VERSION} \
         -t ${IMAGE_NAME}:latest \
@@ -44,14 +49,28 @@ zyte:
   needs:
     - docker-hub
   image: python:3.12.7-slim
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_BUILDKIT: "0"
   before_script:
+    - apt-get update && apt-get install -y docker.io
+    - pip install -U shub
     - VERSION=$(grep '^version =' pyproject.toml | sed -E 's/version = "(.*)"/\1/')
-    - sed -i "s|\$VERSION|$VERSION|g" setup.py
-    - python3 -m pip install --upgrade pip
-    - pip install shub
+    - sed -i "s|\$VERSION|$VERSION|g" scrapinghub.yml
+    - sed -i "s|\$ZYTE_API_KEY|$ZYTE_API_KEY|g" scrapinghub.yml
+    - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+    - docker pull ${IMAGE_NAME}:${VERSION}
   script:
-    - sed -i "s/\$ZYTE_API_KEY/$ZYTE_API_KEY/g" scrapinghub.yml
-    - shub deploy
+    - |
+      OUTPUT=$(shub image deploy --version $VERSION 2>&1)
+      echo "$OUTPUT"
+      if echo "$OUTPUT" | grep -q "'status': 'error'"; then
+        echo "Deploy failed!"
+        exit 1
+      fi
   environment:
     name: zyte
     url: $ENV_URL

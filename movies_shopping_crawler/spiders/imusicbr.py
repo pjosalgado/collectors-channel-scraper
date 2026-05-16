@@ -47,7 +47,12 @@ class ImusicBrSpider(scrapy.Spider):
         except:
             pagination_enabled = False
 
-        spider = cls(*args, pagination_enabled=pagination_enabled, **kwargs)
+        try:
+            max_pages = int(kwargs['PAGINATION_LIMIT'])
+        except:
+            max_pages = None
+
+        spider = cls(*args, pagination_enabled=pagination_enabled, max_pages=max_pages, **kwargs)
         spider._set_crawler(crawler)
 
         return spider
@@ -66,6 +71,7 @@ class ImusicBrSpider(scrapy.Spider):
 
         spider_url_pretty_name = response.meta.get('spider_url_pretty_name', response.url)
         timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).isoformat()
+        current_page = response.meta.get('current_page', 1)
 
         result = response.css('.item-teaser')
         log.info('{} titles found'.format(len(result)))
@@ -109,25 +115,29 @@ class ImusicBrSpider(scrapy.Spider):
                 log.debug('Ignoring title due to filter: {}'.format(full_title))
 
         if self.pagination_enabled:
-            next_page = response.css('.navbar-right > .btn-primary')
-            next_page = next_page[1].css('::attr(href)').get() if len(next_page) > 0 else None
-            if next_page:
-                next_page = response.urljoin(next_page.strip())
-                log.info('Next page is <{}>'.format(next_page))
-                response = self.fetch_page(next_page, spider_url_pretty_name)
-                yield from self.parse(response)
+            if self.max_pages is None or current_page < self.max_pages:
+                next_page = response.css('.navbar-right > .btn-primary')
+                next_page = next_page[1].css('::attr(href)').get() if len(next_page) > 0 else None
+                if next_page:
+                    next_page = response.urljoin(next_page.strip())
+                    log.info('Next page is <{}>'.format(next_page))
+                    response = self.fetch_page(next_page, spider_url_pretty_name, current_page + 1)
+                    yield from self.parse(response)
+                else:
+                    log.info('Next page not found')
             else:
-                log.info('Next page not found')
+                log.info('Max pages reached: {}'.format(self.max_pages))
         else:
             log.info('Pagination is disabled')
 
 
-    def fetch_page(self, url, spider_url_pretty_name):
+    def fetch_page(self, url, spider_url_pretty_name, current_page=1):
 
         request = Request(
             url=url,
             meta={
-                'spider_url_pretty_name': spider_url_pretty_name
+                'spider_url_pretty_name': spider_url_pretty_name,
+                'current_page': current_page,
             }
         )
         request_body = requests.get(url, impersonate="chrome")
